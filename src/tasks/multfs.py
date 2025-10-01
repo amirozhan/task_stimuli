@@ -40,6 +40,8 @@ class multfs_base(Task):
 
     def __init__(self, items_list, *args, **kwargs):
         super().__init__(**kwargs)
+        print(f"[multfs] loading conditions from: {items_list}")
+
         self.item_list = data.importConditions(items_list)
         self.temp_dict = {}
         self.instruction = instructions_converter(self.name) + "\n" + INSTRUCTIONS_DONE

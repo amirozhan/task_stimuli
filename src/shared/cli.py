@@ -85,6 +85,7 @@ def run_task(
             shortcut_evt = run_task_loop(
                 task,
                 task.run(exp_win, ctl_win),
+                exp_win, # I added that
                 eyetracker,
                 gaze_drawer,
                 record_movie=exp_win if record_movie else False,
@@ -268,6 +269,7 @@ Thanks for your participation!"""
             print("READY")
 
             while True:
+                shortcut_evt = None
                 # force focus on the task window to ensure getting keys, TTL, ...
                 exp_win.winHandle.activate()
                 # record frame intervals for debug

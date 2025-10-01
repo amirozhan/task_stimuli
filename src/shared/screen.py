@@ -3,6 +3,7 @@ from subprocess import Popen
 
 
 def init_exp_screen():
+    """
     xrandr = Popen(
         [
             "xrandr",
@@ -14,9 +15,11 @@ def init_exp_screen():
             str(config.FRAME_RATE),
         ]
     )
+    """
 
 
 def reset_exp_screen():
+    """
     xrandr = Popen(
         [
             "xrandr",
@@ -25,3 +28,4 @@ def reset_exp_screen():
             "--preferred",
         ]
     )
+    """
