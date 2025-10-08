@@ -1,8 +1,9 @@
 import os, time, pandas
-
 from psychopy import prefs
-prefs.hardware['audioLib'] = ['sounddevice']
+prefs.hardware['audioLib'] = ['sounddevice','ptb']
 from psychopy import visual, sound, event, core, logging
+import sounddevice as sd
+sd.default.device = (None, 3)
 
 from .task_base import Task
 from ..shared import config, utils

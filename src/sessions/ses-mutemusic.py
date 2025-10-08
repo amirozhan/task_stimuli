@@ -20,7 +20,9 @@ def get_tasks(parsed):
     for i, row in playlist_sequence.iterrows():
         pli = row['playlist']
         playlist_file = f'{sub}_Playlist_{pli}.tsv'
-        playlist_path = os.path.join(STIMULI_PATH, sub, playlist_file)
+        playlist_path = os.path.abspath(os.path.join(STIMULI_PATH, sub, playlist_file))
+        #playlist_path = os.path.join(STIMULI_PATH, sub, playlist_file)
+        print(playlist_path)
         playlist = Playlist(
             tsv_path=playlist_path,
             use_eyetracking=True,
