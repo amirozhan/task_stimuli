@@ -203,6 +203,7 @@ class Pause(Task):
             alignText="center",
             color="white",
             wrapWidth=config.WRAP_WIDTH,
+            flipHoriz=config.MIRROR_X,
         )
 
         while True:
@@ -238,6 +239,7 @@ Do not think about something in particular, let your mind wander..."""
             alignText="center",
             color="white",
             wrapWidth=config.WRAP_WIDTH,
+            flipHoriz=config.MIRROR_X,
         )
 
         for frameN in range(config.FRAME_RATE * config.INSTRUCTION_DURATION):
@@ -248,7 +250,7 @@ Do not think about something in particular, let your mind wander..."""
 
     def _run(self, exp_win, ctl_win):
         screen_text = visual.TextStim(
-            exp_win, text=self.symbol, alignText="center", color="white"
+            exp_win, text=self.symbol, alignText="center", color="white", flipHoriz=config.MIRROR_X
         )
         screen_text.height = 0.2
 

@@ -20,10 +20,9 @@ long_ISI_base = 2 * TR + 1
 short_ISI_base = 0.5
 IMAGES_FOLDER = "data/multfs/MULTIF_4_stim"
 
-
-MULTFS_YES_KEY = "x"
-MULTFS_NO_KEY = "b"
-CONTINUE_KEY = "a"
+MULTFS_YES_KEY = "1"
+MULTFS_NO_KEY = "2"
+CONTINUE_KEY = "3"
 
 INSTRUCTION_DURATION = 120
 
@@ -77,13 +76,14 @@ class multfs_base(Task):
             win = exp_win
         screen_text_bold = visual.TextStim(
             win=exp_win,
-            name='introtext_bold',
+            name='introtext',
             text=self.abbrev_instruction,
             font='Arial',
             pos=(0, 0.5), height=0.1, ori=0,
             color="white", colorSpace='rgb', opacity=1,
             languageStyle='LTR',
             wrapWidth=config.WRAP_WIDTH,
+            flipHoriz=config.MIRROR_X,
         )
         screen_text = visual.TextStim(
             win = exp_win,
@@ -94,6 +94,7 @@ class multfs_base(Task):
             color="white", colorSpace = 'rgb', opacity = 1,
             languageStyle = 'LTR',
             wrapWidth=config.WRAP_WIDTH,
+            flipHoriz=config.MIRROR_X,
         )
 
         # -- prepare to start Routine "Intro" --
@@ -105,15 +106,9 @@ class multfs_base(Task):
                 screen_text_bold.draw(ctl_win)
                 screen_text.draw(ctl_win)
 
-            keys = psychopy.event.getKeys(keyList=['space','a'])
+            keys = psychopy.event.getKeys(keyList=['space', CONTINUE_KEY])
             if keys:
                 break
-            # keys = psychopy.event.getKeys(keyList=['space','a'])
-            # if keys:
-            #     resp_time = self.globalClock.getTime()
-            #     # print("end of the instruction time:", resp_time) # todo: record response time for reading instructions [an empty dict in the init?]
-            #     if keys[-1] == "space" or 'a':
-            #         break
             yield False
         # print("end of the instruction time:", resp_time)
 
@@ -131,6 +126,7 @@ class multfs_base(Task):
             color="white", colorSpace='rgb', opacity=1,
             languageStyle='LTR',
             wrapWidth=config.WRAP_WIDTH,
+            flipHoriz=config.MIRROR_X,
         )
         screen_text = visual.TextStim(
             win=exp_win,
@@ -141,6 +137,7 @@ class multfs_base(Task):
             color="white", colorSpace='rgb', opacity=1,
             languageStyle='LTR',
             wrapWidth=config.WRAP_WIDTH,
+            flipHoriz=config.MIRROR_X,
         )
 
         # -- prepare to start Routine "Intro" --
@@ -175,6 +172,7 @@ class multfs_base(Task):
             color="white", colorSpace='rgb', opacity=1,
             languageStyle='LTR',
             wrapWidth=config.WRAP_WIDTH,
+            flipHoriz=config.MIRROR_X,
         )
         utils.wait_until(self.task_timer, onset - 1./config.FRAME_RATE)
         # -- prepare to start Routine "Intro" --
@@ -203,7 +201,7 @@ class multfs_base(Task):
         )
         n_blocks = self.n_blocks # TODO: CHANGE THE NUMBER OF BLOCKS PER TASK VARIATION
 
-        img = visual.ImageStim(exp_win, size=STIMULI_SIZE, units="norm")
+        img = visual.ImageStim(exp_win, size=STIMULI_SIZE, units="norm", flipHoriz=config.MIRROR_X)
 
         for block in range(n_blocks):
             onset = (
@@ -376,7 +374,7 @@ class multfs_interdms_ABBA(multfs_base):
         self.pattern = pattern
         self.session = session # todo: add progress bar
         if "subtraining" in items_list:
-            self.n_trials = 2
+            self.n_trials = 2 
             self.n_blocks = 2
         else:
             self.n_trials = 16
@@ -385,9 +383,9 @@ class multfs_interdms_ABBA(multfs_base):
         self.trial_isis = [short_ISI_base, long_ISI_base, long_ISI_base, long_ISI_base]
 
 
-INSTRUCTIONS_DONE = """X = yes
-B = no \n\n
-When ready press A.
+INSTRUCTIONS_DONE = """1 = yes
+2 = no \n\n
+When ready press 3.
 """
 
 def instructions_converter(task_name):
