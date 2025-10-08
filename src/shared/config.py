@@ -16,6 +16,7 @@ EYETRACKING_ROI = (60, 30, 660, 450)
 
 EXP_SCREEN_XRANDR_NAME = "eDP-1"
 
+MIRROR_X = True     # left↔right mirror EDIT: LG
 
 EXP_MONITOR = Monitor(
     name='__blank__',
