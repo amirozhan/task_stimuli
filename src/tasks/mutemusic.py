@@ -17,6 +17,7 @@ from ..shared.eyetracking import fixation_dot
 #   step 4: Familiarity assessment
 
 #Global Variables if multiples tasks
+
 QUESTION_DURATION = 7 #5
 INSTRUCTION_DURATION = 25
 DEFAULT_INSTRUCTION = '''Please listen to the following songs. Try to stay as still as possible and avoid nodding your head or tapping your finger to the music rhythm.\n
@@ -72,6 +73,7 @@ class Playlist(Task):
             alignText="center",
             color="white",
             units='height',
+            flipHoriz=config.MIRROR_X,
             height=0.03
         )
 
@@ -96,14 +98,19 @@ class Playlist(Task):
         self.fixation = fixation_dot(exp_win)
 
     def _handle_controller_presses(self):
-        self._new_key_pressed = event.getKeys('lra')
+        #self._new_key_pressed = event.getKeys('lra')
+        self._new_key_pressed = event.getKeys(['1','2','3','4','5','a'])
 
     def _questionnaire(self, exp_win, ctl_win, question, answers):
-        event.getKeys('lra') # flush keys
+        #event.getKeys('lra') # flush keys
+        event.getKeys(['1','2','3','4','5','a']) 
         n_pts = len(answers)
         legends = []
         default_response = n_pts // 2
         response = default_response
+
+        KEY_TO_SCORE = {'1':1, '2':2, '3':3, '4':4, '5':6}  # 5 maps to 6
+        last_numeric_key = None
 
         exp_win.setColor([0] * 3, colorSpace='rgb')
         win_width = exp_win.size[0]
@@ -152,6 +159,7 @@ class Playlist(Task):
                 height= y_spacing / 4.5,
                 anchorHoriz="center",
                 alignText="center",
+                flipHoriz=config.MIRROR_X,
                 bold=True
             )
             for i, answer in enumerate(answers)
@@ -167,6 +175,7 @@ class Playlist(Task):
             wrapWidth= win_width-(win_width*0.1),
             height= y_spacing / 3,
             anchorHoriz="left",
+            flipHoriz=config.MIRROR_X,
             alignText="left"
         )
         #---run-Questionnaire--------------------------------------
@@ -179,15 +188,19 @@ class Playlist(Task):
             self._handle_controller_presses()
             new_key_pressed = [k[0] for k in self._new_key_pressed]
 
-            if "r" in new_key_pressed and response < n_pts - 1:
-                response += 1
-            elif "l" in new_key_pressed and response > 0:
-                response -= 1
-            elif "a" in new_key_pressed:
+            # number-key selection (updates visual cursor; remember which key)
+            for k in ('1','2','3','4','5'):
+                if k in new_key_pressed:
+                    last_numeric_key = k
+                    response = min(int(k) - 1, n_pts - 1)  # visual index 0..4
+
+            # confirm
+            if "a" in new_key_pressed:
+                stored_value = KEY_TO_SCORE.get(last_numeric_key, response + 1)  # default 1..5
                 self._events.append({
                     "track": self.track_name,
                     "question": question,
-                    "value": response,
+                    "value": stored_value,    # <- 6 if they pressed '5'
                     "confirmation": "yes"
                 })
                 break
@@ -213,11 +226,14 @@ class Playlist(Task):
             n_flips += 1
 
         else:
+            stored_value = KEY_TO_SCORE.get(last_numeric_key, response + 1)
             self._events.append({
-                    "track": self.track_name,
-                    "question": question,
-                    "value": response,
-                    "confirmation": "no"})
+                "track": self.track_name,
+                "question": question,
+                "value": stored_value,
+                "confirmation": "no"
+    })
+
             pass
 
         #Flush questionnaire from screen
