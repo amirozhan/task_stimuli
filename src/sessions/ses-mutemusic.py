@@ -1,9 +1,40 @@
 import os
 import pandas
 from ..tasks.mutemusic import Playlist
+from pathlib import Path
 
 STIMULI_PATH  = 'data/mutemusic'
 
+def get_tasks(parsed):
+    sub = f'Sub-{parsed.subject}'
+    subj_dir = Path(STIMULI_PATH) / sub
+    sessions_root = subj_dir / "sessions"
+    
+
+    for session_dir in sorted(sessions_root.iterdir()):
+       
+        for block_dir in sorted(session_dir.glob("B*")):
+            plan = block_dir / "plan.csv"
+            playlist = block_dir / "playlist.tsv"
+            results = block_dir / "results.csv"
+            
+            if results.exists():
+                continue  # already done
+
+            # Ensure we read start/dur from playlist
+            # (Playlist itself will read the TSV; we just hand the path)
+            task = Playlist(
+                tsv_path=str(playlist),
+                block_dir=str(block_dir),
+                use_eyetracking=True,
+                et_calibrate=True,  # or only for the first block if you prefer
+                name=f"task-mutemusic_{session_dir.name}_{block_dir.name}"
+            )
+            yield task
+            return  # one block per run
+
+
+"""
 def get_tasks(parsed):
 
     sub = f'Sub-{parsed.subject}'
@@ -33,3 +64,4 @@ def get_tasks(parsed):
         if playlist._task_completed:
             playlist_order['done'].iloc[i] = 1
             playlist_order.to_csv(playlists_order_path, sep=' ', index=False)
+"""
