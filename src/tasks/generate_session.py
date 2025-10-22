@@ -1,17 +1,26 @@
-from session_planner import plan_all_sessions
+from session_planner import plan_all_episodes
 from pathlib import Path
 
-subject = "00"
-subject_dir = Path("data/mutemusic") / f"Sub-{subject}"
+if __name__ == "__main__":
+    from pathlib import Path
+    # roots
+    main_path = "/Users/amirozhandehghani/Documents/GitHub/neuromod/task_stimuli/data/mutemusic"
+    sub = "00"
 
-out_dirs = plan_all_sessions(
-    root_dir=r"C:\Users\Lucas\Desktop\NACC\task_stimuli\data\mutemusic\Sub-00\music",
-    subject=subject,
-    n_sessions=10,            # how many sessions to generate
-    n_blocks=4,              # how many blocks per session
-    shared_segment_start=30, # fallback start if not in JSON
-    shared_segment_len=10,   # fallback length if not in JSON
-    segment_len=10           # used for favorite/
-)
+    subject_dir = Path(main_path) / f"Sub-{sub}" / "music"
+    subject_dir.mkdir(parents=True, exist_ok=True)
 
-print("Generated:", out_dirs)
+    # config files (written earlier by your generator)
+    segments_shared   = subject_dir / "segments_shared.json"
+    segments_favorite = subject_dir / "segments_favorite.json"
+
+    # run planner
+    out_dirs = plan_all_episodes(
+        root_dir=str(subject_dir),
+        subject=sub,
+        n_episodes=5,
+        n_blocks=4,
+        segments_path_shared=str(segments_shared),
+        segments_path_favorite=str(segments_favorite),
+    )
+    print("Generated:", out_dirs)
