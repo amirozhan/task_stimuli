@@ -5,7 +5,7 @@ subject = "00"
 subject_dir = Path("data/mutemusic") / f"Sub-{subject}"
 
 out_dirs = plan_all_sessions(
-    root_dir=r"C:\Users\Bashivan Lab\Desktop\NACC\task_stimuli\data\mutemusic\Sub-00\music",
+    root_dir=r"C:\Users\Lucas\Desktop\NACC\task_stimuli\data\mutemusic\Sub-00\music",
     subject=subject,
     n_sessions=10,            # how many sessions to generate
     n_blocks=4,              # how many blocks per session

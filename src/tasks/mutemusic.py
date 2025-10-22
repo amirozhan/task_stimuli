@@ -12,6 +12,7 @@ from ..shared import config, utils
 from ..shared.eyetracking import fixation_dot
 import pandas as pd
 from pathlib import Path
+from datetime import datetime
 
 #task : 1 run = 1 playlist = around 10 audio tracks
 #repeat for n songs in subXX_runXX.csv :
@@ -126,137 +127,6 @@ class Playlist(Task):
     def _handle_controller_presses(self):
         #self._new_key_pressed = event.getKeys('lra')
         self._new_key_pressed = event.getKeys(['1','2','3','4','5'])
-
-    """
-    def _questionnaire(self, exp_win, ctl_win, question, answers):
-        # flush keys
-        event.getKeys(['1','2','3','4','5'])
-        n_pts = len(answers)
-        default_response = n_pts // 2
-        response = default_response
-
-        KEY_TO_SCORE = {'1':1, '2':2, '3':3, '4':4, '5':6}
-        last_numeric_key = None
-
-        exp_win.setColor([0] * 3, colorSpace='rgb')
-        win_width = exp_win.size[0]
-        y_spacing=80
-        scales_block_x = win_width * 0.25
-        scales_block_y = exp_win.size[1] * 0.1
-        extent = win_width * 0.2
-        x_spacing= (scales_block_x  + extent) * 2 / (n_pts - 1)
-        y_pos = scales_block_y - y_spacing
-
-        #----------setup-Questionnaire-------------------------
-        line = visual.Line(
-            exp_win,
-            (-(scales_block_x + extent), y_pos),
-            (scales_block_x + extent, y_pos),
-            units="pix",
-            lineWidth=6,
-            autoLog=False,
-            lineColor=(-1, -1, -1)
-        )
-
-        bullets = [
-            visual.Circle(
-                exp_win,
-                units="pix",
-                radius=10,
-                pos=(-(scales_block_x + extent) + i * x_spacing, y_pos),
-                fillColor=(1, 1, 1) if default_response == i else (-1, -1, -1),
-                lineColor=(-1, -1, -1),
-                lineWidth=10,
-                autoLog=False,
-            )
-            for i in range(n_pts)
-        ]
-
-        legends = [
-            visual.TextStim(
-                exp_win,
-                text=answer,
-                units="pix",
-                pos=(-(scales_block_x + extent) + i * x_spacing, exp_win.size[1] * 0.1),
-                wrapWidth=win_width * 0.12,
-                height=y_spacing / 4.5,
-                anchorHoriz="center",
-                alignText="center",
-                bold=True
-            )
-            for i, answer in enumerate(answers)
-        ]
-
-        text = visual.TextStim(
-            exp_win,
-            text=question,
-            units="pix",
-            pos=(-(scales_block_x + extent), y_pos + exp_win.size[1] * 0.30),
-            wrapWidth=win_width-(win_width*0.1),
-            height=y_spacing / 3,
-            anchorHoriz="left",
-            alignText="left"
-        )
-
-        #---run-Questionnaire--------------------------------------
-        n_flips = 0
-        for _ in utils.wait_until_yield(
-            self.task_timer,
-            self.task_timer.getTime() + self.question_duration,
-            keyboard_accuracy=.0001):
-
-            # immediate-submit on 1..5
-            new_keys = event.getKeys(['1','2','3','4','5'])
-            if new_keys:
-                k = new_keys[-1][0]  # most recent
-                last_numeric_key = k
-                response = min(int(k) - 1, n_pts - 1)
-                stored_value = KEY_TO_SCORE.get(k, response + 1)
-                self._events.append({
-                    "track": self._current_seg["track_name"],
-                    "path": self._current_seg["path"],
-                    "segment_start": float(self._current_seg["segment_start"]),
-                    "segment_len": float(self._current_seg["segment_len"]),
-                    "question": question,
-                    "value": stored_value,
-                    "confirmation": "yes"
-                })
-                break
-
-            if n_flips > 1:
-                time.sleep(.01)
-                continue
-
-            exp_win.logOnFlip(level=logging.EXP, msg="rating %s" % response)
-
-            for bullet_n, bullet in enumerate(bullets):
-                bullet.fillColor = (1, 1, 1) if response == bullet_n else (-1, -1, -1)
-
-            line.draw(exp_win)
-            text.draw(exp_win)
-            for legend, bullet in zip(legends, bullets):
-                legend.draw(exp_win)
-                bullet.draw(exp_win)
-
-            yield True
-            n_flips += 1
-
-        else:
-            # timeout -> take current response
-            stored_value = KEY_TO_SCORE.get(last_numeric_key, response + 1)
-            self._events.append({
-                "track": self._current_seg["track_name"],
-                "path": self._current_seg["path"],
-                "segment_start": float(self._current_seg["segment_start"]),
-                "segment_len": float(self._current_seg["segment_len"]),
-                "question": question,
-                "value": stored_value,
-                "confirmation": "no"
-            })
-
-        # Flush questionnaire from screen
-        yield True
-    """
     
     def _questionnaire(self, exp_win, ctl_win, question, answers):
         # Clear previous key events
@@ -313,7 +183,8 @@ class Playlist(Task):
                 height=y_spacing / 4.5,
                 anchorHoriz="center",
                 alignText="center",
-                bold=True
+                bold=True,
+                flipHoriz=config.MIRROR_X
             )
             for i, label in enumerate(answers)
         ]
@@ -322,11 +193,13 @@ class Playlist(Task):
             exp_win,
             text=question,
             units="pix",
+            font = 'Arial',
             pos=(-block_x - extent, y_pos + win_height * 0.30),
             wrapWidth=win_width * 0.9,
             height=y_spacing / 3,
-            anchorHoriz="left",
-            alignText="left"
+            anchorHoriz="center",
+            alignText="left",
+            flipHoriz=config.MIRROR_X
         )
 
         # Main loop
@@ -373,14 +246,13 @@ class Playlist(Task):
                 })
 
                 # Show feedback and exit
-                yield from self._feedback_screen(exp_win, ctl_win, question, answers, selected_index)
                 break
             
 
             if flip_count > 1:
                 time.sleep(0.01)
                 continue
-            """
+
             exp_win.logOnFlip(level=logging.EXP, msg=f"rating {selected_index}")
 
             # Update bullet colors: default state
@@ -396,7 +268,7 @@ class Playlist(Task):
                 bullet.draw(exp_win)
 
             yield True
-            """
+
             flip_count += 1
             
 
@@ -532,7 +404,7 @@ class Playlist(Task):
             print('playing sound')
             print('track path',track_path)
             
-            self.sound = sound.Sound(track_path,startTime=seg_start,stopTime=seg_stop,volume=1)
+            self.sound = sound.Sound(track_path,startTime=seg_start,stopTime=seg_stop,volume=5)
 
             
             planned_duration = seg_dur
@@ -602,7 +474,8 @@ class Playlist(Task):
    
         block_dir = Path(self.block_dir)
         plan_csv = block_dir / "plan.csv"
-        results_csv = block_dir / "results.csv"
+        fname_time = datetime.now().strftime("%Y%m%d_%H%M%S")
+        results_csv = block_dir / f"results_{fname_time}.csv"
 
         # Build events df
         ev_rows = []

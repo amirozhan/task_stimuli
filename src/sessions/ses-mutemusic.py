@@ -18,11 +18,10 @@ def get_tasks(parsed):
         #import pdb;pdb.set_trace()
         plan = block_dir / "plan.csv"
         playlist = block_dir / "playlist.tsv"
-        results = block_dir / "results.csv"
-        
-        if results.exists():
-            continue  
+       
+    
 
+        
         # Ensure we read start/dur from playlist
         # (Playlist itself will read the TSV; we just hand the path)
         

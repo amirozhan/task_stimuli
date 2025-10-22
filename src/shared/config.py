@@ -27,7 +27,7 @@ EXP_MONITOR = Monitor(
 EXP_WINDOW = dict(
     size=(1920, 1080),
     screen=1,
-    fullscr=True,
+    fullscr=False,
     gammaErrorPolicy="warn",
     #waitBlanking=False,
     waitBlanking=True,
@@ -56,3 +56,4 @@ PARALLEL_PORT_ADDRESS = "/dev/parport1"
 
 # serial port for eeg setup
 SERIAL_PORT_ADDRESS = "/dev/ttyACM0"
+

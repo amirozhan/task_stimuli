@@ -1,13 +1,17 @@
 import os, time, pandas
 
-from psychopy import prefs
 
+
+# import sounddevice as sd
+# sd.default.device = (None, 1)
+
+from psychopy import prefs
 prefs.hardware['audioLib'] =['ptb']
 
-from psychopy import visual, event, core, logging
+from psychopy import core
 from psychopy import sound as pysound
-track_path = r'C:\Users\Bashivan Lab\Desktop\music\blues.00000.wav'
-snd = pysound.Sound(track_path,volume=1)
+track_path = r'C:\Users\Lucas\Desktop\NACC\task_stimuli\data\mutemusic\Sub-00\music\favorite\track1.mp3'
+snd = pysound.Sound(track_path,volume=10)
 print("Duration:", getattr(snd, "duration", None))  # should be > 0
 snd.play()
 core.wait(2)
