@@ -25,8 +25,10 @@ from datetime import datetime
 
 QUESTION_DURATION = 10 #5
 INSTRUCTION_DURATION = 25
-MUSIC_DURATION = 20
-FEEDBACK_DURATION = 10
+MUSIC_DURATION = 30
+SONG_RAITING_BUFFER = 2
+ISI = 5
+FINAL_WAIT = 10
 DEFAULT_INSTRUCTION = (
     f"You will hear a {MUSIC_DURATION} second music excerpt.\n"
     "Listen to the music without closing your eyes.\n"
@@ -46,7 +48,7 @@ AUDITORY_IMAGERY_ASSESSMENT = (
 )
 class Playlist(Task):
 #Derived from SoundTaskBase (Narratives task)
-    def __init__(self, tsv_path, initial_wait=5, final_wait=9, question_duration = QUESTION_DURATION, isi=2,block_dir=None, **kwargs):
+    def __init__(self, tsv_path, initial_wait=ISI, final_wait=FINAL_WAIT, question_duration = QUESTION_DURATION, sr_buffer=SONG_RAITING_BUFFER, isi=ISI ,block_dir=None, **kwargs):
         super().__init__(**kwargs)
 
         if not os.path.exists(tsv_path):
@@ -63,7 +65,8 @@ class Playlist(Task):
         self.initial_wait = initial_wait
         self.block_dir = block_dir
         self.final_wait = final_wait
-        self.isi = 5
+        self.sr_buffer = sr_buffer
+        self.isi = isi
         self.question_duration = question_duration
         self.instruction = DEFAULT_INSTRUCTION
 
@@ -97,7 +100,7 @@ class Playlist(Task):
             yield
         yield True
 
-        label = f"Block {self.block_id}" if self.block_id is not None else "Block"
+        label = f"Block {self.block_id} will begin shortly..." if self.block_id is not None else "Block"
         block_text = visual.TextStim(
             exp_win,
             text=label,
@@ -118,7 +121,7 @@ class Playlist(Task):
             if ctl_win:
                 block_text.draw(ctl_win)
             yield True
-       
+
 
     def _setup(self, exp_win):
         super()._setup(exp_win)
@@ -133,7 +136,7 @@ class Playlist(Task):
         default_index = num_options // 2
         selected_index = default_index
         last_key = None
-        KEY_TO_SCORE = {'1': 1, '2': 2, '3': 3, '4': 4, '5': 6}
+        KEY_TO_SCORE = {'1': 1, '2': 2, '3': 3, '4': 4, '6': 5}
 
         # Layout calculations
         win_width, win_height = exp_win.size
@@ -203,7 +206,7 @@ class Playlist(Task):
         end_time = self.task_timer.getTime() + self.question_duration
 
         for _ in utils.wait_until_yield(self.task_timer, end_time, keyboard_accuracy=0.0001):
-            keys = event.getKeys(['1', '2', '3', '4', '5'])
+            keys = event.getKeys(['1', '2', '3', '4', '6'])
             if keys:
                 key = keys[-1]
                 last_key = key
@@ -236,13 +239,14 @@ class Playlist(Task):
                     "path": self._current_seg["path"],
                     "segment_start": float(self._current_seg["segment_start"]),
                     "segment_len": float(self._current_seg["segment_len"]),
+                    "onset": float(self._current_seg['onset']),
+                    "offset": float(self._current_seg['offset']),
                     "question": question,
                     "value": score,
                     "confirmation": "yes"
                 })
 
             
-
             if flip_count > 1:
                 time.sleep(0.01)
                 continue
@@ -266,7 +270,7 @@ class Playlist(Task):
             flip_count += 1
             
 
-        else:
+        if flip_count == 0:
             # Timeout: record default response
             score = KEY_TO_SCORE.get(last_key, selected_index + 1)
             self._events.append({
@@ -274,6 +278,8 @@ class Playlist(Task):
                 "path": self._current_seg["path"],
                 "segment_start": float(self._current_seg["segment_start"]),
                 "segment_len": float(self._current_seg["segment_len"]),
+                "onset": float(self._current_seg['onset']),
+                "offset": float(self._current_seg['offset']),
                 "question": question,
                 "value": score,
                 "confirmation": "no"
@@ -298,8 +304,7 @@ class Playlist(Task):
             
             #setup track
             track_path = track['path']
-            #track_path =  r'C:\Users\Bashivan Lab\Desktop\NACC\task_stimuli\blues.00001.wav'
-            seg_start = float(track.get('start', 0.0))
+            seg_start = float(track.get('start', 10))
             seg_dur   = float(track.get('dur', MUSIC_DURATION))
             seg_stop  = seg_start + seg_dur
             self.track_name = os.path.split(track_path)[1]
@@ -313,7 +318,7 @@ class Playlist(Task):
             )
             self.progress_bar.update(1)
 
-            #initial wait (bullseye 2s)
+            #initial wait (bullseye)
             for _ in utils.wait_until_yield(
                 self.task_timer,
                 next_onset,
@@ -327,7 +332,7 @@ class Playlist(Task):
             track_onset = self.task_timer.getTime(applyZero=True)
             self.sound.play()
             for _ in utils.wait_until_yield(self.task_timer,
-                                            next_onset + self.initial_wait + self.sound.duration,
+                                            track_onset + self.sound.duration + self.sr_buffer,
                                             keyboard_accuracy=.1):
                 yield
 
@@ -341,7 +346,10 @@ class Playlist(Task):
                 "segment_start": seg_start,
                 "segment_len": seg_dur,
                 "track_name": self.track_name,
-}
+                "onset": track_onset,
+                "offset": track_onset + self.sound.duration
+            }
+
             yield from self._questionnaire(exp_win, ctl_win,
                                            question=AUDITORY_IMAGERY_ASSESSMENT[0],
                                            answers=AUDITORY_IMAGERY_ASSESSMENT[1])
@@ -351,7 +359,6 @@ class Playlist(Task):
                 stim.draw(exp_win)
             yield True
 
-            self.playlist.at[index, 'onset']=track_onset
             previous_track_offset = self.task_timer.getTime(applyZero=True)
             next_onset = previous_track_offset + self.isi
         #final wait
@@ -364,14 +371,8 @@ class Playlist(Task):
             self.sound.stop()
         yield True
 
-    def _save(self):
-        if not self.block_dir:
-            # fallback: old behavior
-            self.playlist.to_csv(self._generate_unique_filename("events", "tsv"), sep='\t', index=False)
-            return
-   
+    def _save(self):   
         block_dir = Path(self.block_dir)
-        plan_csv = block_dir / "plan.csv"
         fname_time = datetime.now().strftime("%Y%m%d_%H%M%S")
         results_csv = block_dir / f"results_{fname_time}.csv"
 
@@ -384,22 +385,9 @@ class Playlist(Task):
                 "segment_len": float(e.get("segment_len", 0.0)),
                 "rating_value": e.get("value"),
                 "confirmation": e.get("confirmation"),
-                "played": 1,
+                "onset": float(e.get("onset")),
+                "offset": float(e.get("offset")),
             })
         ev_df = pd.DataFrame(ev_rows)
 
-        # Load plan + left-join on (path, start, len)
-        plan_df = pd.read_csv(plan_csv)
-        # plan has song_relpath; build absolute path column to match events
-        subj_root = block_dir.parents[2]  # .../Sub-XX
-        plan_df["path"] = plan_df["song_relpath"].apply(
-            lambda p: str((Path(p) if Path(p).is_absolute() else (subj_root / p)).resolve())
-        )
-
-        merged = plan_df.merge(
-            ev_df,
-            how="left",
-            left_on=["path","segment_start","segment_len"],
-            right_on=["path","segment_start","segment_len"]
-        )
-        merged.to_csv(results_csv, index=False)
+        ev_df.to_csv(results_csv, index=False)
