@@ -42,8 +42,18 @@ DEFAULT_INSTRUCTION = (
     "Press 1 when ready."
 )
 
+RATING_PROMPT = (
+    "Please indicate this by pressing one of the 5 buttons on the controller:\n\n"
+    "1 - didn't like it at all\n"
+    "2 - somewhat disliked it\n"
+    "3 - neutral\n"
+    "4 - somewhat liked it\n"
+    "5 - really liked it\n\n"
+)
+
 AUDITORY_IMAGERY_ASSESSMENT = (
     "How much did you enjoy the music?",
+    RATING_PROMPT,
     ["didn't like it at all", "", "neutral", "", "really liked it"]
 )
 class Playlist(Task):
@@ -126,8 +136,18 @@ class Playlist(Task):
     def _setup(self, exp_win):
         super()._setup(exp_win)
         self.fixation = fixation_dot(exp_win)
+        label_end = f"End of block.    Waiting for scanner to finish cycle..." if self.block_id is not None else "Block"
+        self.block_end_text = visual.TextStim(
+            exp_win,
+            text=label_end,
+            color="white",
+            units='height',
+            height=0.06,
+            flipHoriz=config.MIRROR_X,
+            alignText="center",
+        )
     
-    def _questionnaire(self, exp_win, ctl_win, question, answers):
+    def _questionnaire(self, exp_win, ctl_win, question, prompt, answers):
         # Clear previous key events
         event.clearEvents()
 
@@ -138,71 +158,115 @@ class Playlist(Task):
         last_key = None
         KEY_TO_SCORE = {'1': 1, '2': 2, '3': 3, '4': 4, '6': 5}
 
-        # Layout calculations
-        win_width, win_height = exp_win.size
-        y_spacing = 80
-        block_x = win_width * 0.25
-        block_y = win_height * 0.1
-        extent = win_width * 0.2
-        x_spacing = (block_x + extent) * 2 / (num_options - 1)
-        y_pos = block_y - y_spacing
+        # ------------------------------
+        # Consistent, proportional layout
+        # ------------------------------
+        win_w, win_h = exp_win.size
+        aspect = win_w / win_h
+        num_options = len(answers)  # e.g., 5
 
-        # Create visual elements
-        line = visual.Line(
+        # Put a dark background so white text pops
+        # (Uncomment if needed)
+        # exp_win.color = 'black'
+        # exp_win.flip()
+
+        # Section Y anchors (in "height" units; 1.0 = full screen height)
+        QUESTION_Y = 0.32    # top section (top-anchored)
+        PROMPT_Y   = 0.24     # middle section (top-anchored)
+        SCALE_Y    = -0.10    # baseline for the rating line
+
+        # Width of the rating scale (fraction of full width)
+        scale_frac   = 0.60                     # 60% of screen width
+        scale_width  = aspect * scale_frac      # width in "height" units
+        half_w       = scale_width / 2.0
+        left_x, right_x = -half_w, +half_w
+        x_spacing = (right_x - left_x) / (num_options - 1)
+
+        # ------------------------------
+        # Question (top)
+        # ------------------------------
+        question_text = visual.TextStim(
             exp_win,
-            start=(-block_x - extent, y_pos),
-            end=(block_x + extent, y_pos),
-            units="pix",
-            lineWidth=6,
-            autoLog=False,
-            lineColor=(-1, -1, -1),
+            text=question,
+            units="height",
+            pos=(0, QUESTION_Y),
+            height=0.03,                         # 5% of screen height
+            wrapWidth=aspect * 0.95,             # wrap at ~95% of screen width
+            color="white",
+            alignText="center",
+            anchorVert="top",                    # keep TOP at QUESTION_Y
+            font="Arial Bold",
+            flipHoriz=config.MIRROR_X
         )
 
+        # ------------------------------
+        # Prompt (middle)
+        # ------------------------------
+        prompt_text = visual.TextStim(
+            exp_win,
+            text=prompt,
+            units="height",
+            pos=(0, PROMPT_Y),
+            height=0.028,
+            wrapWidth=aspect * 0.95,
+            color="white",
+            alignText="center",
+            anchorVert="top",
+            font="Arial",
+            flipHoriz=config.MIRROR_X
+        )
+
+        # ------------------------------
+        # Rating UI (bottom)
+        # ------------------------------
+        # Line (NOTE: lineWidth is in **pixels**, not "height")
+        line = visual.Line(
+            exp_win,
+            start=(left_x, SCALE_Y),
+            end=(right_x, SCALE_Y),
+            units="height",
+            lineWidth=4,                         # px; make it clearly visible
+            lineColor=(-1, -1, -1),
+            autoLog=False,
+        )
+
+        # Bullets (Circle lineWidth is also in px)
         bullets = [
             visual.Circle(
                 exp_win,
-                units="pix",
-                radius=10,
-                pos=(-block_x - extent + i * x_spacing, y_pos),
-                fillColor=(-1, -1, -1),  # black fill
-                lineColor=(1, 1, 1),     # white border
-                lineWidth=10,
+                units="height",
+                radius=0.015,                    # ~1.5% of screen height
+                pos=(left_x + i * x_spacing, SCALE_Y),
+                fillColor=(1, 1, 1),             # white fill for visibility
+                lineColor=(1, 1, 1),
+                lineWidth=2,                     # px
                 autoLog=False,
             )
             for i in range(num_options)
         ]
 
+        # Legends under the bullets
+        legend_y = SCALE_Y - 0.06               # ~6% below the line
         legends = [
             visual.TextStim(
                 exp_win,
                 text=label,
-                units="pix",
-                pos=(-block_x - extent + i * x_spacing, block_y),
-                wrapWidth=win_width * 0.12,
-                height=y_spacing / 4.5,
-                anchorHoriz="center",
+                units="height",
+                pos=(left_x + i * x_spacing, legend_y),
+                wrapWidth=scale_width * 0.30,    # wrap relative to the scale width
+                height=0.028,
                 alignText="center",
+                color="white",
                 bold=True,
-                flipHoriz=config.MIRROR_X
+                flipHoriz=config.MIRROR_X,
+                anchorVert="center",
             )
             for i, label in enumerate(answers)
         ]
 
-        question_text = visual.TextStim(
-            exp_win,
-            text=question,
-            units="pix",
-            font = 'Arial',
-            pos=(-block_x - extent, y_pos + win_height * 0.30),
-            wrapWidth=win_width * 0.9,
-            height=y_spacing / 3,
-            anchorHoriz="center",
-            alignText="left",
-            flipHoriz=config.MIRROR_X
-        )
-
         # Main loop
         flip_count = 0
+        final_press = None
         end_time = self.task_timer.getTime() + self.question_duration
 
         for _ in utils.wait_until_yield(self.task_timer, end_time, keyboard_accuracy=0.0001):
@@ -225,6 +289,7 @@ class Playlist(Task):
                 # Draw updated screen
                 line.draw(exp_win)
                 question_text.draw(exp_win)
+                prompt_text.draw(exp_win)
                 for legend, bullet in zip(legends, bullets):
                     legend.draw(exp_win)
                     bullet.draw(exp_win)
@@ -234,7 +299,7 @@ class Playlist(Task):
                 core.wait(2.0)
 
                 # Log response
-                self._events.append({
+                final_press = {
                     "track": self._current_seg["track_name"],
                     "path": self._current_seg["path"],
                     "segment_start": float(self._current_seg["segment_start"]),
@@ -244,9 +309,8 @@ class Playlist(Task):
                     "question": question,
                     "value": score,
                     "confirmation": "yes"
-                })
-
-            
+                }
+                
             if flip_count > 1:
                 time.sleep(0.01)
                 continue
@@ -261,6 +325,7 @@ class Playlist(Task):
             # Draw all elements
             line.draw(exp_win)
             question_text.draw(exp_win)
+            prompt_text.draw(exp_win)
             for legend, bullet in zip(legends, bullets):
                 legend.draw(exp_win)
                 bullet.draw(exp_win)
@@ -270,9 +335,8 @@ class Playlist(Task):
             flip_count += 1
             
 
-        if flip_count == 0:
+        if final_press == None:
             # Timeout: record default response
-            score = KEY_TO_SCORE.get(last_key, selected_index + 1)
             self._events.append({
                 "track": self._current_seg["track_name"],
                 "path": self._current_seg["path"],
@@ -281,9 +345,11 @@ class Playlist(Task):
                 "onset": float(self._current_seg['onset']),
                 "offset": float(self._current_seg['offset']),
                 "question": question,
-                "value": score,
+                "value": -1,
                 "confirmation": "no"
             })
+        else:
+            self._events.append(final_press)
 
         # Clear screen
         yield True
@@ -352,7 +418,8 @@ class Playlist(Task):
 
             yield from self._questionnaire(exp_win, ctl_win,
                                            question=AUDITORY_IMAGERY_ASSESSMENT[0],
-                                           answers=AUDITORY_IMAGERY_ASSESSMENT[1])
+                                           prompt=AUDITORY_IMAGERY_ASSESSMENT[1],
+                                           answers=AUDITORY_IMAGERY_ASSESSMENT[2])
 
             #display bullseye for netx iteration
             for stim in self.fixation:
@@ -361,6 +428,12 @@ class Playlist(Task):
 
             previous_track_offset = self.task_timer.getTime(applyZero=True)
             next_onset = previous_track_offset + self.isi
+
+        self.block_end_text.draw(exp_win)
+        if ctl_win:
+            self.block_end_text.draw(ctl_win)
+        yield True
+
         #final wait
         print(f"{'*'*25} PREPARE TO STOP {'*'*25}")
         yield from utils.wait_until_yield(self.task_timer, previous_track_offset + self.final_wait)
@@ -390,4 +463,5 @@ class Playlist(Task):
             })
         ev_df = pd.DataFrame(ev_rows)
 
+        # import pdb;pdb.set_trace()
         ev_df.to_csv(results_csv, index=False)

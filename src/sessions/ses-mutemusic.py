@@ -2,6 +2,7 @@ import os
 import pandas
 from ..tasks.mutemusic import Playlist
 from pathlib import Path
+from natsort import natsorted
 
 STIMULI_PATH  = 'data/mutemusic'
 
@@ -14,8 +15,8 @@ def get_tasks(parsed):
     session_dir = sessions_root / session_num
 
        
-    for block_dir in sorted(session_dir.glob("B*")):
-        #import pdb;pdb.set_trace()
+    for block_dir in natsorted(session_dir.glob("B*")):
+        # import pdb;pdb.set_trace()
         plan = block_dir / "plan.csv"
         playlist = block_dir / "playlist.tsv"
     
