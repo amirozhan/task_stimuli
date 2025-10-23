@@ -23,7 +23,7 @@ from datetime import datetime
 
 #Global Variables if multiples tasks
 
-QUESTION_DURATION = 7 #5
+QUESTION_DURATION = 10 #5
 INSTRUCTION_DURATION = 25
 MUSIC_DURATION = 20
 FEEDBACK_DURATION = 10
@@ -46,7 +46,7 @@ AUDITORY_IMAGERY_ASSESSMENT = (
 )
 class Playlist(Task):
 #Derived from SoundTaskBase (Narratives task)
-    def __init__(self, tsv_path, initial_wait=6, final_wait=9, question_duration = 5, isi=2,block_dir=None, **kwargs):
+    def __init__(self, tsv_path, initial_wait=5, final_wait=9, question_duration = QUESTION_DURATION, isi=2,block_dir=None, **kwargs):
         super().__init__(**kwargs)
 
         if not os.path.exists(tsv_path):
@@ -63,7 +63,7 @@ class Playlist(Task):
         self.initial_wait = initial_wait
         self.block_dir = block_dir
         self.final_wait = final_wait
-        self.isi = 2
+        self.isi = 5
         self.question_duration = question_duration
         self.instruction = DEFAULT_INSTRUCTION
 
@@ -123,10 +123,6 @@ class Playlist(Task):
     def _setup(self, exp_win):
         super()._setup(exp_win)
         self.fixation = fixation_dot(exp_win)
-
-    def _handle_controller_presses(self):
-        #self._new_key_pressed = event.getKeys('lra')
-        self._new_key_pressed = event.getKeys(['1','2','3','4','5'])
     
     def _questionnaire(self, exp_win, ctl_win, question, answers):
         # Clear previous key events
@@ -245,8 +241,6 @@ class Playlist(Task):
                     "confirmation": "yes"
                 })
 
-                # Show feedback and exit
-                break
             
 
             if flip_count > 1:
@@ -287,98 +281,6 @@ class Playlist(Task):
 
         # Clear screen
         yield True
-
-    def _feedback_screen(self, exp_win, ctl_win, question, answers, choice_idx):
-        """
-        Show a brief confirmation screen highlighting the chosen rating.
-        """
-        n_pts = len(answers)
-        win_width = exp_win.size[0]
-        y_spacing = 80
-        scales_block_x = win_width * 0.25
-        scales_block_y = exp_win.size[1] * 0.1
-        extent = win_width * 0.2
-        x_spacing = (scales_block_x + extent) * 2 / (n_pts - 1)
-        y_pos = scales_block_y - y_spacing
-
-        line = visual.Line(
-            exp_win,
-            (-(scales_block_x + extent), y_pos),
-            (scales_block_x + extent, y_pos),
-            units="pix",
-            lineWidth=6,
-            autoLog=False,
-            lineColor=(-1, -1, -1)
-        )
-
-        bullets = [
-            visual.Circle(
-                exp_win,
-                units="pix",
-                radius=10,
-                pos=(-(scales_block_x + extent) + i * x_spacing, y_pos),
-                fillColor=(1, 1, 1) if choice_idx == i else (-1, -1, -1),
-                lineColor=(-1, -1, -1),
-                lineWidth=10,
-                autoLog=False,
-            )
-            for i in range(n_pts)
-        ]
-
-        legends = [
-            visual.TextStim(
-                exp_win,
-                text=answers[i],
-                units="pix",
-                pos=(-(scales_block_x + extent) + i * x_spacing, exp_win.size[1] * 0.1),
-                wrapWidth=win_width * 0.12,
-                height=y_spacing / 4.5,
-                anchorHoriz="center",
-                alignText="center",
-                bold=True
-            )
-            for i in range(n_pts)
-        ]
-
-        header = visual.TextStim(
-            exp_win,
-            text=question,
-            units="pix",
-            pos=(-(scales_block_x + extent), y_pos + exp_win.size[1] * 0.30),
-            wrapWidth=win_width - (win_width * 0.1),
-            height=y_spacing / 3,
-            anchorHoriz="left",
-            alignText="left"
-        )
-
-        confirm = visual.TextStim(
-            exp_win,
-            text=f"Selected: {choice_idx + 1}",
-            color="yellow",
-            units="height",
-            height=0.035,
-            pos=(0, 0.32),
-            alignText="center"
-        )
-
-        deadline = self.task_timer.getTime() + FEEDBACK_DURATION
-        while self.task_timer.getTime() < deadline:
-            
-            line.draw(exp_win)
-            header.draw(exp_win)
-            confirm.draw(exp_win)
-            for legend, bullet in zip(legends, bullets):
-                legend.draw(exp_win)
-                bullet.draw(exp_win)
-            if ctl_win:
-                line.draw(ctl_win)
-                header.draw(ctl_win)
-                confirm.draw(ctl_win)
-                for legend, bullet in zip(legends, bullets):
-                    legend.draw(ctl_win)
-                    bullet.draw(ctl_win)
-            yield True
-
     
     
     
@@ -405,10 +307,6 @@ class Playlist(Task):
             print('track path',track_path)
             
             self.sound = sound.Sound(track_path,startTime=seg_start,stopTime=seg_stop,volume=5)
-
-            
-            planned_duration = seg_dur
-            #self.duration = self.sound.duration
 
             self.progress_bar.set_description(
                 f"Trial {index}:: {self.track_name}"

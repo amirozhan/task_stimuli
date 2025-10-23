@@ -77,9 +77,9 @@ def _build_segments_for_bucket(
 
         if randomize:
             rng = _per_song_rng(seed, key_for_config)  # seed by the key we write
-            start = rng.uniform(0.0, max(0.0, float(max_start)))
+            start = rng.uniform(10.0, max(10.0, float(max_start)))
         else:
-            start = 0.0
+            start = 10.0
 
         length = float(seg_len)
 
@@ -87,10 +87,10 @@ def _build_segments_for_bucket(
             dur = _maybe_probe_duration_seconds(abs_path)
             if dur is not None:
                 if length > dur:
-                    length = max(0.0, dur)
-                    start = 0.0
+                    length = max(10.0, dur)
+                    start = 10.0
                 else:
-                    latest_start = max(0.0, dur - length)
+                    latest_start = max(10.0, dur - length)
                     if start > latest_start:
                         start = latest_start
 
@@ -159,7 +159,7 @@ def generate_segments_json_split(
     print(f"[ok] wrote {len(favorite_cfg)} favorite entries → {out_favorite}")
     return out_shared, out_favorite
 
-main_path = "/Users/amirozhandehghani/Documents/GitHub/neuromod/task_stimuli/data/mutemusic"
+main_path = r"C:\Users\Lucas\Desktop\NACC\task_stimuli\data\mutemusic"
 sub = "00"
 
 subject_dir = Path(main_path) / f"Sub-{sub}" / "music"

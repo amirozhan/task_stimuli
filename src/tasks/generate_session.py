@@ -4,7 +4,7 @@ from pathlib import Path
 if __name__ == "__main__":
     from pathlib import Path
     # roots
-    main_path = "/Users/amirozhandehghani/Documents/GitHub/neuromod/task_stimuli/data/mutemusic"
+    main_path = r"C:\Users\Lucas\Desktop\NACC\task_stimuli\data\mutemusic"
     sub = "00"
 
     subject_dir = Path(main_path) / f"Sub-{sub}" / "music"
@@ -18,8 +18,8 @@ if __name__ == "__main__":
     out_dirs = plan_all_episodes(
         root_dir=str(subject_dir),
         subject=sub,
-        n_episodes=5,
-        n_blocks=4,
+        n_episodes=12,
+        n_blocks=20,
         segments_path_shared=str(segments_shared),
         segments_path_favorite=str(segments_favorite),
     )

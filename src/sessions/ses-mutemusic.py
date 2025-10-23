@@ -8,8 +8,8 @@ STIMULI_PATH  = 'data/mutemusic'
 def get_tasks(parsed):
     sub = f'Sub-{parsed.subject}'
     subj_dir = Path(STIMULI_PATH) / sub
-    sessions_root = subj_dir / "sessions"
-    session_num = 'S01'
+    sessions_root = subj_dir / "episodes"
+    session_num = 'E01'
     #import pdb;pdb.set_trace()
     session_dir = sessions_root / session_num
 
@@ -18,9 +18,7 @@ def get_tasks(parsed):
         #import pdb;pdb.set_trace()
         plan = block_dir / "plan.csv"
         playlist = block_dir / "playlist.tsv"
-       
     
-
         
         # Ensure we read start/dur from playlist
         # (Playlist itself will read the TSV; we just hand the path)
@@ -33,7 +31,7 @@ def get_tasks(parsed):
             name=f"task-mutemusic_{session_dir.name}_{block_dir.name}"
         )
         yield task
-        return  # one block per run
+        # return  # one block per run
 
 
 """
@@ -43,7 +41,7 @@ def get_tasks(parsed):
     playlists_order_path = os.path.join(STIMULI_PATH, sub, f'{sub}_Playlist_order.tsv')
     playlist_order = pandas.read_csv(playlists_order_path, sep=' ')
 
-    current_playlist = len(playlist_order)
+    current_playlist = len(playlist_order)f
     for i, row in playlist_order.iterrows():
         if not row['done']:
             current_playlist = i
