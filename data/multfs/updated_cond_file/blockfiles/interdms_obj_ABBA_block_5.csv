@@ -1,0 +1,5 @@
+stim1,objmod1,locmod1,angmod1,ctgmod1,objlocmod1,ref1,stim2,objmod2,locmod2,angmod2,ctgmod2,objlocmod2,ref2,stim3,objmod3,locmod3,angmod3,ctgmod3,objlocmod3,ref3,stim4,objmod4,locmod4,angmod4,ctgmod4,objlocmod4,ref4,action1,action2
+1,0,0,1,0,0,1,15,3,1,1,1,7,7,2,1,0,0,0,1,2,15,3,1,1,1,7,7,False,False
+1,0,0,1,0,0,1,1,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,True,True
+13,2,1,1,1,6,5,8,0,1,0,0,4,0,10,1,1,0,0,5,2,8,0,1,0,0,4,0,False,False
+3,1,0,1,0,1,3,5,2,0,1,1,2,5,10,1,1,0,0,5,2,4,2,0,0,1,2,4,False,False

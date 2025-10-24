@@ -1,0 +1,5 @@
+﻿TrialNumber	stim1	loc1	locmod1	ctgmod1	objmod1	angmod1	objlocmod1	ref1	stim2	loc2	locmod2	ctgmod2	objmod2	angmod2	objlocmod2	ref2	stim3	loc3	locmod3	ctgmod3	objmod3	angmod3	objlocmod3	ref3	action	ran	order	late_responses_0	stimulus_0_onset	stimulus_0_offset	late_responses_1	stimulus_1_onset	stimulus_1_offset	late_responses_2	stimulus_2_onset	stimulus_2_offset
+1	8	1	1	0	0	0	4	0	14	1	1	1	3	0	7	6	8	1	1	0	0	0	4	0	False	1.0	0.0	[]	5.995129	7.4845405	[]	7.982881	9.474252	[]	13.45345	14.944847
+2	9	1	1	0	0	1	4	1	12	1	1	1	2	0	6	4	5	0	0	1	2	1	2	5	True	1.0	1.0	[]	18.922781	20.414738	[]	20.912737	22.404255	[]	26.38344	27.874464
+3	14	1	1	1	3	0	7	6	15	1	1	1	3	1	7	7	13	1	1	1	2	1	6	5	False	1.0	2.0	[]	31.852758	33.34403	[]	33.843052	35.334053	[]	39.313496	40.804493
+4	6	0	0	1	3	0	3	6	3	0	0	0	1	1	1	3	0	0	0	0	0	0	0	0	False	1.0	3.0	[]	44.783047	46.273945	[]	46.772743	48.263863	[]	52.243385	53.73444

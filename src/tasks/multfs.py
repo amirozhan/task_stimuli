@@ -32,7 +32,7 @@ screensize = config.EXP_WINDOW["size"]
 triplet_id_to_pos = [(-.5, 0), (.5, 0), ]
 
 # STIMULI_SIZE = (screensize[0], screensize[1]/2)
-STIMULI_SIZE = (1.4,.9)
+STIMULI_SIZE = (1.3,.9)
 print("stimuli size:", STIMULI_SIZE)
 
 class multfs_base(Task):
@@ -43,7 +43,11 @@ class multfs_base(Task):
 
         self.item_list = data.importConditions(items_list)
         self.temp_dict = {}
-        self.instruction = instructions_converter(self.name) + "\n" + INSTRUCTIONS_DONE
+        self.instruction = instructions_converter(self.name) + "\n" + INSTRUCTIONS_DONE + "\n" + \
+            """The beginning of a trial is indicated with a fixation cross at the center of the screen.\n
+            The presence of a red dot during an object screen indicates that an answer response is not required yet.\n
+            When ready press 3.
+            """
         self.abbrev_instruction = abbrev_instructions_converter(self.name)
         # print("abbrev instruction:", self.abbrev_instruction)
         self.globalClock = core.Clock() # to track the time since experiment start
@@ -299,9 +303,9 @@ class multfs_dms(multfs_base):
         super().__init__(items_list, **kwargs)
         if "subtraining" in items_list:
             self.n_trials = 4
-            self.n_blocks = 2
+            self.n_blocks = 1
         else:
-            self.n_trials = 16 # todo to be modified to in accordance with the file => this is fine as the baseline task
+            self.n_trials = 4 # todo to be modified to in accordance with the file => this is fine as the baseline task
             self.n_blocks = 1
 
         self.feature = feature
@@ -385,74 +389,94 @@ class multfs_interdms_ABBA(multfs_base):
 
 INSTRUCTIONS_DONE = """1 = yes
 2 = no \n\n
-When ready press 3.
 """
 
 def instructions_converter(task_name):
     task = task_name[5:].split('_run')[0]
     task = f"multfs_{task}"
-
     ins_dict = {
-        "multfs_dmsloc": """Do frame 1 and 2 have same LOCATION.\n""",
+        "multfs_dmsloc": """
+            In this task, trials will have 2 objects. You must do the following:\n
+            - When Object 2 appears, answer whether its LOCATION matches Object 1.\n
+            """,
 
-        "multfs_dmsobj": """Do frame 1 and 2 have same IDENTITY.\n""",
+        "multfs_dmsobj": """
+            In this task, trials will have 2 objects. You must do the following:\n
+            - When Object 2 appears, answer whether its IDENTITY matches Object 1.\n
+            """,
 
         "multfs_interdmslocABBA": """
-interleaved delay match to sample task with pattern ABBA and feature LOCATION\n
-Answer on frame 3: does the LOCATION match that of frame 2. \n
-Answer on frame 4: does the LOCATION match that of frame 1. \n
-                              """,
+            In this task, trials will have 4 objects. You must do the following:\n
+            Pattern ABBA — feature: LOCATION\n
+            - When Object 3 appears, answer whether its LOCATION matches Object 2.\n
+            - When Object 4 appears, answer whether its LOCATION matches Object 1.\n
+            """,
+
         "multfs_interdmsctgABBA": """
-interleaved delay match to sample task with pattern ABBA and feature CATEGORY\n
-Answer on frame 3: does the CATEGORY match that of frame 2. \n
-Answer on frame 4: does the CATEGORY match that of frame 1. \n
-                                  """,
+            In this task, trials will have 4 objects. You must do the following:\n
+            Pattern ABBA — feature: CATEGORY\n
+            - When Object 3 appears, answer whether its CATEGORY matches Object 2.\n
+            - When Object 4 appears, answer whether its CATEGORY matches Object 1.\n
+            """,
+
         "multfs_interdmsobjABBA": """
-interleaved delay match to sample task with pattern ABBA and feature IDENTITY\n
-Answer on frame 3: does the IDENTITY match that of frame 2. \n
-Answer on frame 4: does the IDENTITY match that of frame 1. \n
-                                  """,
+            In this task, trials will have 4 objects. You must do the following:\n
+            Pattern ABBA — feature: IDENTITY\n
+            - When Object 3 appears, answer whether its IDENTITY matches Object 2.\n
+            - When Object 4 appears, answer whether its IDENTITY matches Object 1.\n
+            """,
+
         "multfs_interdmslocABAB": """
-interleaved delay match to sample task with pattern ABAB and feature LOCATION\n
-Answer on frame 3: does the LOCATION match that of frame 1. \n
-Answer on frame 4: does the LOCATION match that of frame 2. \n
-                              """,
+            In this task, trials will have 4 objects. You must do the following:\n
+            Pattern ABAB — feature: LOCATION\n
+            - When Object 3 appears, answer whether its LOCATION matches Object 1.\n
+            - When Object 4 appears, answer whether its LOCATION matches Object 2.\n
+            """,
+
         "multfs_interdmsctgABAB": """
-interleaved delay match to sample task with pattern ABAB and feature CATEGORY\n
-Answer on frame 3: does the CATEGORY match that of frame 1. \n
-Answer on frame 4: does the CATEGORY match that of frame 2. \n
-                                  """,
+            In this task, trials will have 4 objects. You must do the following:\n
+            Pattern ABAB — feature: CATEGORY\n
+            - When Object 3 appears, answer whether its CATEGORY matches Object 1.\n
+            - When Object 4 appears, answer whether its CATEGORY matches Object 2.\n
+            """,
+
         "multfs_interdmsobjABAB": """
-interleaved delay match to sample task with pattern ABAB and feature IDENTITY\n
-Answer on frame 3: does the IDENTITY match that of frame 1. \n
-Answer on frame 4: does the IDENTITY match that of frame 2. \n
-    """,
+            In this task, trials will have 4 objects. You must do the following:\n
+            Pattern ABAB — feature: IDENTITY\n
+            - When Object 3 appears, answer whether its IDENTITY matches Object 1.\n
+            - When Object 4 appears, answer whether its IDENTITY matches Object 2.\n
+            """,
+
         "multfs_1backloc": """
-In this task, you will see a sequence of stimulus.\n
+            In this task, trials will have 6 objects. You must do the following:\n
+            - For each new object (Object n+1), answer whether its LOCATION matches the previous object (Object n).\n
+            """,
 
-On frame n+1: do the LOCATION match that of frame n.\n
-                    """,
         "multfs_1backobj": """
-In this task, you will see a sequence of stimulus. \n
+            In this task, trials will have 6 objects. You must do the following:\n
+            - For each new object (Object n+1), answer whether its IDENTITY matches the previous object (Object n).\n
+            """,
 
-On frame n+1: do the IDENTITY match that of frame n.\n
-
-                    """,
         "multfs_1backctg": """
-In this task, you will see a sequence of stimulus. \n
-
-On frame n+1: do the CATEGORY match that of frame n.\n
-""",
+            In this task, trials will have 6 objects. You must do the following:\n
+            - For each new object (Object n+1), answer whether its CATEGORY matches the previous object (Object n).\n
+            """,
 
         "multfs_ctxcol": """
-        contextual Decision Making task: CATEGORY-IDENTITY-LOCATION \n
-        If frames 1 and 2 match on CATEGORY, match frames 2 and 3 based on IDENTITY, otherwise on LOCATION.\n
-                """,
+            In this task, trials will have 3 objects. You must do the following:\n
+            Contextual Decision-Making: CATEGORY → IDENTITY → LOCATION\n
+            - If Objects 1 and 2 match in CATEGORY, answer whether Object 3 matches Object 2 by IDENTITY.\n
+            - Otherwise, answer whether Object 3 matches Object 2 by LOCATION.\n
+            """,
+
         "multfs_ctxlco": """
-contextual Decision Making task: LOCATION-CATEGORY-IDENTITY \n
-If frames 1 and 2 match on LOCATION, match frames 2 and 3 based on CATEGORY, otherwise on IDENTITY.\n
-                    """,
+            In this task, trials will have 3 objects. You must do the following:\n
+            Contextual Decision-Making: LOCATION → CATEGORY → IDENTITY\n
+            - If Objects 1 and 2 match in LOCATION, answer whether Object 3 matches Object 2 by CATEGORY.\n
+            - Otherwise, answer whether Object 3 matches Object 2 by IDENTITY.\n
+            """,
     }
+
     return ins_dict[task]
 
 
