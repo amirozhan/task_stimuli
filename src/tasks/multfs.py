@@ -55,7 +55,7 @@ class multfs_base(Task):
         self.frameTolerance = 0.001 # how close to onset before 'same' frame
         self.storage_dict = {}
 
-        self._trial_sampling_method = "random"
+        self._trial_sampling_method = "sequential"
 
     def _setup(self, exp_win):
         self.fixation = visual.TextStim(exp_win, text="+", alignText="center", color="white")
@@ -161,7 +161,6 @@ class multfs_base(Task):
         psychopy.event.getKeys() # flush keys ?
         print("end of the block instruction:", self.globalClock.getTime())
 
-
     def _block_end(self, exp_win, ctl_win, onset):
         if ctl_win:
             win = ctl_win
@@ -194,7 +193,6 @@ class multfs_base(Task):
         if hasattr(self, 'trials'):
             self.trials.saveAsWideText(self._generate_unique_filename("events", "tsv"))
         return None
-
 
     def _run(self, exp_win, ctl_win):
         self.fixation.draw()
@@ -233,8 +231,6 @@ class multfs_base(Task):
                     img.image = IMAGES_FOLDER + "/" + str(trial["ref%s" % str(n_stim+1)]) + "/image.png"
                     if not 'interdms' in self.name:
                         img.pos = triplet_id_to_pos[trial[f"loc{n_stim+1}"]]
-                    else:
-                        img.pos = triplet_id_to_pos[trial[f"locmod{n_stim+1}"]]
                     img.draw()
 
                     # flush response keys before the stimuli onset
