@@ -47,6 +47,11 @@ def get_tasks(parsed):
                 wait_key='a',
             )
 
+        yield Pause(
+                text="Please wait while we setup the scanner for the next block...",
+                wait_key='8',
+        )
+
         kwargs = {
             'use_eyetracking':True,
             'et_calibrate': ri == 2
@@ -54,7 +59,7 @@ def get_tasks(parsed):
 
         block_file_name = runs.block_file_name
         feat = block_file_name.split('_')[1] # TODO get consistent filenaming!
-        run_design_path = os.path.join(data_path, "updated_cond_file/trevor_blockfiles/", block_file_name + '.csv')
+        run_design_path = os.path.join(data_path, "updated_cond_file/blockfiles/", block_file_name + '.csv')
         if 'interdms' in block_file_name:
             tasks_idxs['interdms'] += 1
             order = block_file_name.split('_')[2]

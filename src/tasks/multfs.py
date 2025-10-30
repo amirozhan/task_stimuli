@@ -11,7 +11,7 @@ from .task_base import Fixation
 from ..shared import config, utils
 
 initial_wait = 6
-final_wait = 9
+final_wait = 1
 
 TR = 1.49
 STIMULI_DURATION = TR
