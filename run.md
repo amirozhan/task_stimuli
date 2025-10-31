@@ -1,2 +1,2 @@
 ### Command for pouya oct 31 multfs sesesion 
-```python3 main.py   --subject 01   --session 1   --tasks multfs   --output output/multfs_v2_pb   --no-force-resolution   --run_on_battery   --skip-soundcheck --fmri```
+```python main.py   --subject 01   --session 1   --tasks multfs   --output output/multfs_v2_pb   --no-force-resolution   --run_on_battery   --skip-soundcheck --fmri```
