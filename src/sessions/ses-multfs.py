@@ -3,7 +3,7 @@ from ..tasks import multfs
 from ..tasks.task_base import Pause
 import pandas as pd
 
-data_path = "./data/multfs"
+data_path = "./data/multfs/trevor"
 
 def get_tasks(parsed):
 
@@ -11,8 +11,9 @@ def get_tasks(parsed):
         os.path.join(data_path, 'study_designs', f"sub-{int(parsed.subject):02d}_design.tsv"),
         delimiter='\t')
 
+    session = int(parsed.session)
 
-    session_runs = study_design[study_design.session.eq(int(parsed.session))]
+    session_runs = study_design[study_design.session.eq(session)]
 
     print("*"*100)
     print("Today we will run the tasks in the following order")
@@ -21,17 +22,22 @@ def get_tasks(parsed):
         print(f"- func_task-{runs.block_file_name.split('_')[0]}")
 
     yield multfs.multfs_dms(
-        os.path.join(data_path, "updated_cond_file/pilot_DMS_loc_prac.csv"),
+        os.path.join(data_path, "blockfiles/dms_loc.csv"), 
         name = f"task-dmsloc_run-01",
         feature='loc',
         use_eyetracking=True,
         et_calibrate=True, # first task
     )
 
+    yield Pause(
+            text="Please wait while we setup the scanner for the next block...",
+            wait_key='8',
+    )
+
     tasks_idxs = {
         'interdms': 0,
         'ctxdm': 0,
-        'nback': 0
+        '1back': 0
     }
 
     for ri, (_, runs) in enumerate(session_runs.iterrows()):
@@ -47,11 +53,6 @@ def get_tasks(parsed):
                 wait_key='a',
             )
 
-        yield Pause(
-                text="Please wait while we setup the scanner for the next block...",
-                wait_key='8',
-        )
-
         kwargs = {
             'use_eyetracking':True,
             'et_calibrate': ri == 2
@@ -59,7 +60,7 @@ def get_tasks(parsed):
 
         block_file_name = runs.block_file_name
         feat = block_file_name.split('_')[1] # TODO get consistent filenaming!
-        run_design_path = os.path.join(data_path, "updated_cond_file/blockfiles/", block_file_name + '.csv')
+        run_design_path = os.path.join(data_path, f"blockfiles/session{session:02d}", block_file_name + '.csv') 
         if 'interdms' in block_file_name:
             tasks_idxs['interdms'] += 1
             order = block_file_name.split('_')[2]
@@ -78,11 +79,16 @@ def get_tasks(parsed):
                 feature=feat,
                 **kwargs
             )
-        elif 'nback' in block_file_name:
-            tasks_idxs['nback'] += 1
+        elif '1back' in block_file_name:
+            tasks_idxs['1back'] += 1
             yield multfs.multfs_1back(
                 run_design_path,
-                name = f"task-1back{feat}_run-{tasks_idxs['nback']:02d}",
+                name = f"task-1back{feat}_run-{tasks_idxs['1back']:02d}",
                 feature=feat,
                 **kwargs
             )
+
+        yield Pause(
+                text="Please wait while we setup the scanner for the next block...",
+                wait_key='8',
+        )

@@ -1,4 +1,11 @@
 import os, sys, time, random
+import warnings
+import pandas as pd
+
+# Suppress pandas SettingWithCopy and Future warnings (used inside psychopy.data)
+warnings.filterwarnings("ignore", category=pd.errors.SettingWithCopyWarning)
+warnings.filterwarnings("ignore", category=FutureWarning)
+
 import numpy as np
 import psychopy
 from psychopy import visual, core, data, logging, event
@@ -10,13 +17,13 @@ from .task_base import Fixation
 
 from ..shared import config, utils
 
-initial_wait = 6
+initial_wait = 3
 final_wait = 1
 
 TR = 1.49
 STIMULI_DURATION = TR
-ISI_base = 2 * TR + 1
-long_ISI_base = 2 * TR + 1
+ISI_base = 2 * TR + 0.5
+long_ISI_base = 2 * TR + 0.5
 short_ISI_base = 0.5
 IMAGES_FOLDER = "data/multfs/MULTIF_4_stim"
 
@@ -74,10 +81,6 @@ class multfs_base(Task):
 
     def _instructions(self, exp_win, ctl_win):
         yield True
-        if ctl_win:
-            win = ctl_win
-        else:
-            win = exp_win
         screen_text_bold = visual.TextStim(
             win=exp_win,
             name='introtext',
@@ -103,7 +106,7 @@ class multfs_base(Task):
 
         # -- prepare to start Routine "Intro" --
         # print("start of the task:", self.globalClock.getTime())
-        for frameN in range(int(np.floor(config.FRAME_RATE * INSTRUCTION_DURATION))):
+        for _frame in range(int(np.floor(config.FRAME_RATE * INSTRUCTION_DURATION))):
             screen_text_bold.draw(exp_win)
             screen_text.draw(exp_win)
             if ctl_win:
@@ -117,10 +120,6 @@ class multfs_base(Task):
         # print("end of the instruction time:", resp_time)
 
     def _block_intro(self, exp_win, ctl_win, onset, n_trials = 4):
-        if ctl_win:
-            win = ctl_win
-        else:
-            win = exp_win
         screen_text_bold = visual.TextStim(
             win=exp_win,
             name='introtext_bold',
@@ -162,10 +161,6 @@ class multfs_base(Task):
         print("end of the block instruction:", self.globalClock.getTime())
 
     def _block_end(self, exp_win, ctl_win, onset):
-        if ctl_win:
-            win = ctl_win
-        else:
-            win = exp_win
         screen_text = visual.TextStim(
             win=exp_win,
             name='blockendtext',
@@ -229,8 +224,7 @@ class multfs_base(Task):
                         )
 
                     img.image = IMAGES_FOLDER + "/" + str(trial["ref%s" % str(n_stim+1)]) + "/image.png"
-                    if not 'interdms' in self.name:
-                        img.pos = triplet_id_to_pos[trial[f"loc{n_stim+1}"]]
+                    img.pos = triplet_id_to_pos[trial[f"loc{n_stim+1}"]]
                     img.draw()
 
                     # flush response keys before the stimuli onset
