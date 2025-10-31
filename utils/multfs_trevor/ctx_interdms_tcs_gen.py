@@ -167,7 +167,7 @@ if __name__ == "__main__":
     }
 
     """
-    ----- Generate ctxdm col and lco blocks -----
+    ----- Generate ctxdm col and lco tcs -----
     """
     taskname = "ctxdm"
     variants = ["col", "lco"]
@@ -184,9 +184,9 @@ if __name__ == "__main__":
         print(df.head())
 
         # Save to CSV
-        save_block_csv(df, tcs_dir + f"/{taskname}_{variant}_all_trials.csv")
+        save_block_csv(df, tcs_dir + f"/{taskname}_{variant}_session01.csv")
 
-    """----- Generate interdms blocks (loc, ctg, obj; ABAB and ABBA) -----
+    """----- Generate interdms tcs (loc, ctg, obj; ABAB and ABBA) -----
     """
     taskname = "interdms"
     variants = ["loc_ABAB", "loc_ABBA", "ctg_ABAB", "ctg_ABBA", "obj_ABAB", "obj_ABBA"]
@@ -203,4 +203,4 @@ if __name__ == "__main__":
         print(df.head())
 
         # Save to CSV
-        save_block_csv(df, tcs_dir + f"/{taskname}_{variant}_all_trials.csv")   
+        save_block_csv(df, tcs_dir + f"/{taskname}_{variant}_session01.csv")   

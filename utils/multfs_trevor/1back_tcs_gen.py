@@ -1,17 +1,12 @@
-# oneback_block_generator_ref_from_obj_ang.py
-# Generate minimal 1-back trials (length 6) covering a requested number of unique ordered pairs.
-# Columns per position X=1..seq_len: locX, refX, objX, ctgX, angX
-# angX is random; obj/loc from the node chain; refX = objX*2 + angX
-
-from typing import List, Optional
-from math import ceil
+# oneback_sessions_generator.py
+from typing import List, Optional, Tuple, Dict
+from collections import Counter
 import random
 import pandas as pd
 
-# -------------------- core combinatorics --------------------
+# ---------------- de Bruijn utilities ----------------
 
 def _debruijn_indices(k: int, n: int) -> List[int]:
-    """de Bruijn sequence indices for alphabet size k and subsequences of length n."""
     a = [0] * (k * n)
     seq = []
     def db(t, p):
@@ -28,56 +23,115 @@ def _debruijn_indices(k: int, n: int) -> List[int]:
     return seq  # length k**n
 
 def _symbols8() -> List[str]:
-    # 8 symbols = two-digit strings "lo": "00","01","02","03","10","11","12","13"
     return [f"{loc}{obj}" for loc in (0, 1) for obj in (0, 1, 2, 3)]
 
-def _build_trials_min_for_pairs(ntcs: int, seq_len: int = 6, seed: Optional[int] = None) -> List[List[str]]:
+def _symbol_to_loc_obj(sym: str) -> Tuple[int, int]:
+    return int(sym[0]), int(sym[1])
+
+def _ctg_from_obj(obj: int) -> int:
+    return 0 if obj <= 1 else 1
+
+# ---------------- core segmentation (handles any ntcs 5..64) ----------------
+
+def _build_segments_for_ntcs(
+    ntcs: int,
+    seq_len: int = 6,
+    seed: Optional[int] = None,
+) -> List[List[str]]:
     """
-    Build the minimal number of trials (each with seq_len nodes) whose consecutive pairs
-    cover at least ntcs unique ordered pairs (no pair repeats across all trials).
+    Return a list of trials as node-chains (each is a list of symbols like '00','13',...).
+    Trials are contiguous slices of a de Bruijn cycle so that their consecutive pairs
+    cover exactly `ntcs` unique ordered pairs with no repeats.
+
+    If ntcs % (seq_len-1) != 0, the final trial will be shorter (rem+1 nodes).
     """
     assert 5 <= ntcs <= 64, "ntcs must be in [5, 64]"
     assert seq_len >= 2, "seq_len must be >= 2"
-    pairs_per_trial = seq_len - 1
-    n_trials = ceil(ntcs / pairs_per_trial)
+    pairs_per_full_trial = seq_len - 1
 
-    symbols = _symbols8()                         # 8 symbols
-    cyc_idx = _debruijn_indices(k=len(symbols), n=2)  # 64 indices (pairs cover all 8x8 once)
-    # Rotate by seed for variety
+    symbols = _symbols8()
+    cyc_idx = _debruijn_indices(k=len(symbols), n=2)  # covers all 64 ordered pairs once
+    # rotate for reproducibility/variety
     if seed is not None:
         r = seed % len(cyc_idx)
         cyc_idx = cyc_idx[r:] + cyc_idx[:r]
 
-    # Turn into cyclic node list (close the cycle)
-    cycle_nodes = [symbols[i] for i in cyc_idx] + [symbols[cyc_idx[0]]]
+    cycle_nodes = [symbols[i] for i in cyc_idx] + [symbols[cyc_idx[0]]]  # close cycle
 
-    # Non-overlapping chunks of 5 edges => 6 nodes per trial
     trials: List[List[str]] = []
     edge_pos = 0
-    for _ in range(n_trials):
+    pairs_remaining = ntcs
+
+    while pairs_remaining > 0:
+        take_pairs = min(pairs_per_full_trial, pairs_remaining)
+        # take_pairs edges -> take_pairs+1 nodes
         start = edge_pos
-        end = edge_pos + (seq_len - 1)  # inclusive node index
+        end = edge_pos + take_pairs
         trials.append(cycle_nodes[start:end + 1])
-        edge_pos += (seq_len - 1)
+        edge_pos += take_pairs
+        pairs_remaining -= take_pairs
 
-    return trials
+    return trials  # last trial may be shorter when ntcs not multiple of (seq_len-1)
 
-# -------------------- task design helpers --------------------
+# ---------------- instantiation ----------------
 
-def _ctg_from_obj(obj: int) -> int:
-    # obj 0-1 -> ctg 0; obj 2-3 -> ctg 1
-    return 0 if obj <= 1 else 1
+def _instantiate_trials(
+    nodes_list: List[List[str]],
+    seed: Optional[int],
+    include_chain_col: bool = True,
+) -> pd.DataFrame:
+    """
+    Build a DataFrame from node chains.
+    Columns per position X: locX, refX, objX, ctgX, angX.
+    Also includes `tc_nodes` and `tc_pairs` if include_chain_col=True.
+    Handles mixed trial lengths (last trial may be shorter).
+    """
+    rng = random.Random(seed)
+    max_len = max(len(nodes) for nodes in nodes_list)
 
-def _symbol_to_loc_obj(sym: str):
-    # "01" -> (0,1)
-    if len(sym) != 2 or not sym.isdigit():
-        raise ValueError(f"Bad symbol '{sym}' (expected two digits 'lo')")
-    loc = int(sym[0]); obj = int(sym[1])
-    if loc not in (0, 1) or obj not in (0, 1, 2, 3):
-        raise ValueError(f"Out-of-range symbol '{sym}'")
-    return loc, obj
+    rows = []
+    for nodes in nodes_list:
+        row: Dict[str, Optional[int]] = {}
+        # fill available positions
+        for i, sym in enumerate(nodes, start=1):
+            loc, obj = _symbol_to_loc_obj(sym)
+            ang = rng.randint(0, 1)
+            ref = obj * 2 + ang  # your rule
+            row[f"loc{i}"] = loc
+            row[f"ref{i}"] = ref
+            row[f"obj{i}"] = obj
+            row[f"ctg{i}"] = _ctg_from_obj(obj)
+            row[f"ang{i}"] = ang
+        # pad unused positions to keep rectangular DF
+        for i in range(len(nodes) + 1, max_len + 1):
+            row[f"loc{i}"] = None
+            row[f"ref{i}"] = None
+            row[f"obj{i}"] = None
+            row[f"ctg{i}"] = None
+            row[f"ang{i}"] = None
 
-# -------------------- public API --------------------
+        if include_chain_col:
+            row["tc_nodes"] = "_".join(nodes)
+            row["tc_pairs"] = ",".join(f"{nodes[j]}_{nodes[j+1]}" for j in range(len(nodes)-1))
+
+        rows.append(row)
+
+    # column order
+    cols = []
+    for i in range(1, max_len + 1):
+        cols += [f"loc{i}", f"ref{i}", f"obj{i}", f"ctg{i}", f"ang{i}"]
+    if include_chain_col:
+        cols += ["tc_nodes", "tc_pairs"]
+
+    df = pd.DataFrame(rows)[cols]
+    # Use pandas' nullable ints so None is allowed for padded cells
+    for i in range(1, max_len + 1):
+        for col in (f"loc{i}", f"ref{i}", f"obj{i}", f"ctg{i}", f"ang{i}"):
+            if col in df.columns:
+                df[col] = df[col].astype("Int64")
+    return df
+
+# ---------------- public APIs ----------------
 
 def generate_oneback_block(
     ntcs: int,
@@ -86,178 +140,172 @@ def generate_oneback_block(
     include_chain_col: bool = True,
 ) -> pd.DataFrame:
     """
-    Generate a 1-back block with the minimal number of trials (rows) to cover at least `ntcs` unique ordered pairs.
-    Each trial has `seq_len` nodes (default 6 -> 5 pairs per trial).
-
-    Columns per position X=1..seq_len:
-        locX, refX, objX, ctgX, angX
-    Plus optional:
-        tc_nodes: '00_13_11_00_01_10'
-        tc_pairs: '00_13,13_11,11_00,00_01,01_10'
-
-    Rules:
-        - locX,objX from the node chain
-        - ctgX from objX (0-1 -> 0; 2-3 -> 1)
-        - angX is random in {0,1}
-        - refX = objX * 2 + angX   (your updated rule)
+    Single-session block covering exactly `ntcs` unique ordered pairs with minimal trials.
+    If `ntcs` is not a multiple of (seq_len-1), the last trial is shorter.
     """
+    trials_nodes = _build_segments_for_ntcs(ntcs=ntcs, seq_len=seq_len, seed=seed)
+    return _instantiate_trials(trials_nodes, seed=seed, include_chain_col=include_chain_col)
+
+def generate_oneback_sessions(
+    ntcs: int,
+    sessions: int = 4,
+    seq_len: int = 6,
+    seed: Optional[int] = None,
+    include_chain_col: bool = True,
+) -> List[pd.DataFrame]:
+    """
+    Multi-session version: returns a list of DataFrames (one per session).
+    Every session uses the EXACT SAME set of `ntcs` ordered pairs (no repeats within a session).
+    Trials are the same contiguous segments across sessions but are **shuffled** per session.
+    `ang` is re-sampled per session; `ref = obj*2 + ang`.
+    """
+    assert sessions >= 1
+    base_nodes = _build_segments_for_ntcs(ntcs=ntcs, seq_len=seq_len, seed=seed)
+
     rng = random.Random(seed)
-    trials = _build_trials_min_for_pairs(ntcs=ntcs, seq_len=seq_len, seed=seed)
+    dfs: List[pd.DataFrame] = []
+    for s in range(sessions):
+        segs = list(base_nodes)
+        if s > 0:
+            rng.shuffle(segs)  # reorder trials for variety
+        df = _instantiate_trials(segs, seed=None if seed is None else seed + 1000 + s,
+                                 include_chain_col=include_chain_col)
+        dfs.append(df)
+    return dfs
 
-    rows = []
-    for nodes in trials:
-        row = {}
-        for i, sym in enumerate(nodes, start=1):
-            loc, obj = _symbol_to_loc_obj(sym)
-            ang = rng.randint(0, 1)              # random angle
-            ref = obj * 2 + ang                  # derived from (obj, ang)
-            row[f"loc{i}"] = loc
-            row[f"obj{i}"] = obj
-            row[f"ctg{i}"] = _ctg_from_obj(obj)
-            row[f"ang{i}"] = ang
-            row[f"ref{i}"] = ref
+# ---------------- optional sanity checks ----------------
 
-        if include_chain_col:
-            pairs = [f"{nodes[j]}_{nodes[j+1]}" for j in range(len(nodes)-1)]
-            row["tc"] = ",".join(pairs)
-
-        rows.append(row)
-
-    # Column order: group by position
-    base_cols = []
-    for i in range(1, seq_len + 1):
-        base_cols += [f"loc{i}", f"ref{i}", f"obj{i}", f"ctg{i}", f"ang{i}"]
-    if include_chain_col:
-        base_cols += ["tc"]
-
-    df = pd.DataFrame(rows)[base_cols]
-    return df
-
-# --- Sanity utilities ---
-
-from typing import List, Tuple, Dict, Any
-from collections import Counter
-
-def _pairs_from_nodes(nodes: List[str]) -> List[str]:
-    """['00','13','11'] -> ['00_13','13_11']"""
-    return [f"{nodes[i]}_{nodes[i+1]}" for i in range(len(nodes)-1)]
-
-def _nodes_from_df_row(row, seq_len: int) -> List[str]:
+def sanity_check_oneback_trials(df: pd.DataFrame) -> Dict[str, object]:
     """
-    Rebuild the node chain for one trial (row) as two-digit strings 'lo'.
-    Uses 'tc_nodes' when present; otherwise reconstructs from locX/objX.
+    Ensures:
+      - no pair repeats within the session
+      - adjacency holds within each trial (WX_YZ, YZ_AB, ...)
     """
-    if "tc_nodes" in row and isinstance(row["tc_nodes"], str) and row["tc_nodes"]:
-        return row["tc_nodes"].split("_")
-
-    nodes = []
-    for i in range(1, seq_len + 1):
-        loc = int(row[f"loc{i}"])
-        obj = int(row[f"obj{i}"])
-        nodes.append(f"{loc}{obj}")
-    return nodes
-
-def _extract_trials_from_df(df) -> List[List[str]]:
-    """
-    Returns a list of trials, where each trial is a list of node strings (e.g. ['00','13','11','00','01','10']).
-    Infers seq_len from the DataFrame.
-    """
-    # infer seq_len by counting how many loc* columns
-    seq_len = max(
-        int(col[3:])  # from 'locX'
-        for col in df.columns
-        if col.startswith("loc")
-    )
+    # infer max possible positions
+    max_pos = max(int(c[3:]) for c in df.columns if c.startswith("loc"))
+    # extract nodes per row, tolerating shorter final trials
     trials = []
     for _, row in df.iterrows():
-        trials.append(_nodes_from_df_row(row, seq_len))
-    return trials
+        if "tc_nodes" in df.columns:
+            nodes = str(row["tc_nodes"]).split("_")
+        else:
+            nodes = []
+            for i in range(1, max_pos + 1):
+                loc = row.get(f"loc{i}")
+                obj = row.get(f"obj{i}")
+                if pd.isna(loc) or pd.isna(obj):
+                    break
+                nodes.append(f"{int(loc)}{int(obj)}")
+        trials.append(nodes)
 
-def sanity_check_oneback_trials(df) -> Dict[str, Any]:
-    """
-    Checks two properties:
-      1) No tc (ordered pair) repeats anywhere (within/across trials).
-      2) Within each trial, consecutive pairs share the touching stimulus (WX_YZ, YZ_AB, ...).
-
-    Returns a report dict. Raises no exceptions—so you can print/report gracefully.
-    """
-    trials = _extract_trials_from_df(df)
-
-    # 1) No repeats across all trials
+    # build pairs
     all_pairs = []
-    per_trial_pairs = []
+    repeats = Counter()
+    adjacency_ok = True
     for t in trials:
-        pairs = _pairs_from_nodes(t)
-        per_trial_pairs.append(pairs)
+        pairs = [f"{t[i]}_{t[i+1]}" for i in range(len(t)-1)]
         all_pairs.extend(pairs)
+        # adjacency
+        for i in range(len(pairs)-1):
+            if pairs[i].split("_")[1] != pairs[i+1].split("_")[0]:
+                adjacency_ok = False
+        # count within this trial for local repeats (optional)
+        local_counts = Counter(pairs)
+        for p, c in local_counts.items():
+            if c > 1:
+                repeats[p] += c
 
-    pair_counts = Counter(all_pairs)
-    repeated_pairs = {p: c for p, c in pair_counts.items() if c > 1}
-
-    # 2) Adjacency within each trial
-    adjacency_violations: List[Tuple[int, int, str, str]] = []  # (trial_idx, j, p_j, p_j+1)
-    for ti, pairs in enumerate(per_trial_pairs):
-        for j in range(len(pairs) - 1):
-            left = pairs[j].split("_")
-            right = pairs[j + 1].split("_")
-            if left[1] != right[0]:
-                adjacency_violations.append((ti, j, pairs[j], pairs[j + 1]))
-
-    ok_no_repeats = len(repeated_pairs) == 0
-    ok_adjacency = len(adjacency_violations) == 0
+    global_counts = Counter(all_pairs)
+    global_repeats = {p:c for p,c in global_counts.items() if c > 1}
 
     return {
-        "ok": ok_no_repeats and ok_adjacency,
-        "ok_no_repeats": ok_no_repeats,
-        "ok_adjacency": ok_adjacency,
-        "repeated_pairs": repeated_pairs,           # dict like {'00_13': 2, ...}
-        "adjacency_violations": adjacency_violations,  # list of (trial_idx, pos, pair_j, pair_j+1)
-        "n_trials": len(trials),
-        "n_unique_pairs": len(pair_counts),
+        "ok_no_repeats": len(global_repeats) == 0,
+        "ok_adjacency": adjacency_ok,
+        "n_unique_pairs": len(global_counts),
+        "global_repeats": global_repeats,
+        "local_repeats": dict(repeats),
+    }
+
+def sanity_check_across_sessions(dfs: List[pd.DataFrame]) -> dict:
+    """
+    Ensures that all sessions:
+      - Contain the exact same set of unique TC pairs
+      - Have no repeats within themselves
+      - Maintain adjacency constraints in every trial
+    Returns a dictionary summary.
+    """
+    session_reports = []
+    session_pairsets = []
+    all_ok_within = True
+    adjacency_ok = True
+
+    for i, df in enumerate(dfs, start=1):
+        rep = sanity_check_oneback_trials(df)
+        session_reports.append(rep)
+        session_pairsets.append(set(",".join(df["tc_pairs"].dropna()).split(",")))
+
+        if not rep["ok_no_repeats"]:
+            all_ok_within = False
+        if not rep["ok_adjacency"]:
+            adjacency_ok = False
+
+    # Check identical pair sets across sessions
+    first_pairs = session_pairsets[0]
+    all_same = all(pairs == first_pairs for pairs in session_pairsets[1:])
+
+    return {
+        "n_sessions": len(dfs),
+        "all_same_pairs": all_same,
+        "ok_no_repeats_within": all_ok_within,
+        "ok_adjacency_within": adjacency_ok,
+        "n_unique_pairs": len(first_pairs),
+        "pairset_example": list(first_pairs)[:10],  # preview some pairs
     }
 
 def save_block_csv(df: pd.DataFrame, path: str) -> None:
     df.to_csv(path, index=False)
 
+# ---------------- example usage ----------------
+# if __name__ == "__main__":
+#     # Single session like before (e.g., 60 TCs -> 12 trials)
+#     df1 = generate_oneback_block(ntcs=60, seq_len=6, seed=123, include_chain_col=True)
+#     print("Single session shape:", df1.shape)
+#     print(sanity_check_oneback_trials(df1))
+
+#     # Four sessions sharing the exact same TCs
+#     dfs = generate_oneback_sessions(ntcs=60, sessions=4, seq_len=6, seed=123, include_chain_col=True)
+#     print("Sessions:", [d.shape for d in dfs])
+#     print("All sessions have same pairs:",
+#           len({frozenset(sum([d.tc_pairs.str.split(",").sum() for d in dfs], []))}) == 1)
+
+
 if __name__ == "__main__":
+    import os
+    from pathlib import Path
+
     # Output dir
-    tcs_dir = "/Users/lucasgomez/Desktop/Neuro/Bashivan/Music2Brain/ozhan_branch/task_stimuli/data/multfs/updated_cond_file/trevor/tcs"
+    tcs_dir = Path("/Users/lucasgomez/Desktop/Neuro/Bashivan/Music2Brain/ozhan_branch/task_stimuli/data/multfs/updated_cond_file/trevor/tcs")
+    os.makedirs(tcs_dir, exist_ok=True)
 
-    """
-    ----- Generate 1back block with 60 unique pairs for 1back-loc -----
-    """
-    df_1back_loc = generate_oneback_block(ntcs=60, seq_len=6, seed=0, include_chain_col=True)
+    def run_and_save(task_name, seed):
+        print(f"\n----- Generating 1back block for {task_name} -----")
+        dfs = generate_oneback_sessions(ntcs=50, sessions=4, seq_len=6, seed=seed, include_chain_col=True)
 
-    # Run sanity checks
-    report_1back_loc = sanity_check_oneback_trials(df_1back_loc)
-    print("Sanity OK for 1back_loc:", report_1back_loc["ok"])
-    print("Unique pairs covered for 1back_loc:", report_1back_loc["n_unique_pairs"])
-    
-    # Save to CSV
-    save_block_csv(df_1back_loc, tcs_dir + "/1back_loc_all_trials.csv")
+        # Per-session checks
+        for i, df in enumerate(dfs, start=1):
+            rep = sanity_check_oneback_trials(df)
+            print(f"Session {i}: repeats={rep['ok_no_repeats']}, adjacency={rep['ok_adjacency']}, "
+                  f"unique_pairs={rep['n_unique_pairs']}")
+            save_block_csv(df, tcs_dir / f"{task_name}_session0{i}.csv")
 
-    """
-    ----- Generate 1back block with 30 unique pairs for 1back-ctg -----
-    """
-    df_1back_ctg = generate_oneback_block(ntcs=60, seq_len=6, seed=1, include_chain_col=True)
+        # Cross-session consistency check
+        multi_rep = sanity_check_across_sessions(dfs)
+        print(f"\nCross-session sanity for {task_name}:")
+        print(f"  Same TC pairs across sessions: {multi_rep['all_same_pairs']}")
+        print(f"  All sessions individually clean: {multi_rep['ok_no_repeats_within'] and multi_rep['ok_adjacency_within']}")
+        print(f"  Total unique pairs: {multi_rep['n_unique_pairs']}")
 
-    # Run sanity checks
-    report_1back_ctg = sanity_check_oneback_trials(df_1back_ctg)
-    print("Sanity OK for 1back_ctg:", report_1back_ctg["ok"])
-    print("Unique pairs covered for 1back_ctg:", report_1back_ctg["n_unique_pairs"])    
-
-    # Save to CSV
-    save_block_csv(df_1back_ctg, tcs_dir + "/1back_ctg_all_trials.csv")    
-
-    """
-    ----- Generate 1back block with 15 unique pairs for 1back-obj -----
-    """
-    df_1back_obj = generate_oneback_block(ntcs=60, seq_len=6, seed=2, include_chain_col=True)
-
-    # Run sanity checks
-    report_1back_obj = sanity_check_oneback_trials(df_1back_obj)
-    print("Sanity OK for 1back_obj:", report_1back_obj["ok"])
-    print("Unique pairs covered for 1back_obj:", report_1back_obj["n_unique_pairs"])    
-
-    # Save to CSV
-    save_block_csv(df_1back_obj, tcs_dir + "/1back_obj_all_trials.csv")
+    # Run all 3 tasks
+    run_and_save("1back_loc", seed=0)
+    run_and_save("1back_ctg", seed=1)
+    run_and_save("1back_obj", seed=2)

@@ -20,9 +20,9 @@ long_ISI_base = 2 * TR + 1
 short_ISI_base = 0.5
 IMAGES_FOLDER = "data/multfs/MULTIF_4_stim"
 
-MULTFS_YES_KEY = "1"
-MULTFS_NO_KEY = "2"
-CONTINUE_KEY = "3"
+MULTFS_YES_KEY = "2"
+MULTFS_NO_KEY = "3"
+CONTINUE_KEY = "4"
 
 INSTRUCTION_DURATION = 120
 
