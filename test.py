@@ -10,8 +10,8 @@ prefs.hardware['audioLib'] =['ptb']
 
 from psychopy import core
 from psychopy import sound as pysound
-track_path = r'C:\Users\Lucas\Desktop\NACC\task_stimuli\data\mutemusic\Sub-00\music\favorite\track1.mp3'
-snd = pysound.Sound(track_path,volume=10)
+track_path = r'C:\Users\Bashivan Lab\Desktop\NACC\task_stimuli\data\mutemusic\stimuli\blues.00000.wav'
+snd = pysound.Sound(track_path,volume=5)
 print("Duration:", getattr(snd, "duration", None))  # should be > 0
 snd.play()
-core.wait(2)
+core.wait(10)
