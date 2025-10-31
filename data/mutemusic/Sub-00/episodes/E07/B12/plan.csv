@@ -1,6 +1,6 @@
 subject,episode_id,episode_date,mode,block_id,block_order,song_id,song_dir,song_file,song_relpath,segment_start,segment_len,segment_relpath,is_new,first_seen_episode_id,first_seen_date,first_seen_block_id,first_seen_block_order,played,rating_value,confirmation
-00,E07,2025-10-22,fixed-segments,12,1,track14,favorite,track14.mp3,favorite\track14.mp3,118.821,30.0,favorite\track14.mp3,1,E07,2025-10-22,12,1,0,,
-00,E07,2025-10-22,fixed-segments,12,2,track26,shared,track26.mp3,shared\track26.mp3,34.032,30.0,shared\track26.mp3,1,E07,2025-10-22,12,2,0,,
-00,E07,2025-10-22,fixed-segments,12,3,track20,shared,track20.mp3,shared\track20.mp3,36.006,30.0,shared\track20.mp3,1,E07,2025-10-22,12,3,0,,
-00,E07,2025-10-22,fixed-segments,12,4,track1,favorite,track1.mp3,favorite\track1.mp3,63.892,30.0,favorite\track1.mp3,0,E07,2025-10-22,13,2,0,,
-00,E07,2025-10-22,fixed-segments,12,5,track80,shared,track80.mp3,shared\track80.mp3,48.498,30.0,shared\track80.mp3,1,E07,2025-10-22,12,5,0,,
+00,E07,2025-10-23,fixed-segments,12,1,track14,favorite,track14.mp3,favorite\track14.mp3,118.821,30.0,favorite\track14.mp3,1,E07,2025-10-23,12,1,0,,
+00,E07,2025-10-23,fixed-segments,12,2,track26,shared,track26.mp3,shared\track26.mp3,34.032,30.0,shared\track26.mp3,1,E07,2025-10-23,12,2,0,,
+00,E07,2025-10-23,fixed-segments,12,3,track20,shared,track20.mp3,shared\track20.mp3,36.006,30.0,shared\track20.mp3,1,E07,2025-10-23,12,3,0,,
+00,E07,2025-10-23,fixed-segments,12,4,track1,favorite,track1.mp3,favorite\track1.mp3,63.892,30.0,favorite\track1.mp3,0,E07,2025-10-23,13,2,0,,
+00,E07,2025-10-23,fixed-segments,12,5,track80,shared,track80.mp3,shared\track80.mp3,48.498,30.0,shared\track80.mp3,1,E07,2025-10-23,12,5,0,,
