@@ -64,4 +64,11 @@ def parse_args():
     parser.add_argument(
         "--record-movie", help="record a movie of each task", action="store_true"
     )
+    # episode like E01; if omitted we’ll derive from --session
+    parser.add_argument(
+    "--blocks",
+    default=None,
+    help="Blocks to run. Examples: '1' or '1-10' or '1,3,7'. If omitted, runs all blocks in the episode."
+)
+
     return parser.parse_args()

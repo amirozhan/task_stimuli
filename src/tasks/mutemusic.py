@@ -1,11 +1,17 @@
 import os, time, pandas,re
+import warnings
+from psychopy import logging
+
+warnings.filterwarnings("ignore")             # suppress Python warnings
+logging.console.setLevel(logging.CRITICAL+1) 
 from psychopy import prefs
 prefs.hardware['audioLib'] = ['ptb']
-#prefs.hardware['audioLib'] = ['sounddevice','ptb']  # try sounddevice first
+
 
 from psychopy import visual, sound, event, core, logging
-#import sounddevice as sd
-#sd.default.device = (None, 3)
+
+from ..tasks import video, task_base
+
 
 from .task_base import Task
 from ..shared import config, utils
@@ -56,6 +62,36 @@ AUDITORY_IMAGERY_ASSESSMENT = (
     RATING_PROMPT,
     ["didn't like it at all", "", "neutral", "", "really liked it"]
 )
+
+def pause_screen(exp_win, ctl_win, text="We are setting up the scanner for the next block.\n\nPlease wait...",
+                 wait_key='8', height=0.045):
+    """Show a full-screen message until `wait_key` is pressed. If wait_key=None, show indefinitely."""
+
+    msg = visual.TextStim(
+        exp_win, text=text, color="white", units="height",
+        height=height, wrapWidth=1.6, alignText="center",
+        flipHoriz=config.MIRROR_X
+    )
+    msg_ctl = None
+    if ctl_win:
+        msg_ctl = visual.TextStim(
+            ctl_win, text=text, color="white", units="height",
+            height=height, wrapWidth=1.6, alignText="center",
+            flipHoriz=config.MIRROR_X
+        )
+
+    event.clearEvents()
+    while True:
+        msg.draw(exp_win)
+        if msg_ctl:
+            msg_ctl.draw(ctl_win)
+        yield True
+        if wait_key:
+            if wait_key in event.getKeys([wait_key]):
+                break
+        else:
+            # no key configured → just keep showing (caller controls timing)
+            pass
 class Playlist(Task):
 #Derived from SoundTaskBase (Narratives task)
     def __init__(self, tsv_path, initial_wait=ISI, final_wait=FINAL_WAIT, question_duration = QUESTION_DURATION, sr_buffer=SONG_RAITING_BUFFER, isi=ISI ,block_dir=None, **kwargs):
@@ -109,6 +145,8 @@ class Playlist(Task):
                 yield True
             yield
         yield True
+
+        
 
         label = f"Block {self.block_id} will begin shortly..." if self.block_id is not None else "Block"
         block_text = visual.TextStim(
@@ -374,10 +412,9 @@ class Playlist(Task):
             seg_dur   = float(track.get('dur', MUSIC_DURATION))
             seg_stop  = seg_start + seg_dur
             self.track_name = os.path.split(track_path)[1]
-            print('playing sound')
-            print('track path',track_path)
-            
+                        
             self.sound = sound.Sound(track_path,startTime=seg_start,stopTime=seg_stop,volume=5)
+            self.duration = self.sound.duration
 
             self.progress_bar.set_description(
                 f"Trial {index}:: {self.track_name}"
@@ -397,6 +434,8 @@ class Playlist(Task):
             #track playing (variable timing)
             track_onset = self.task_timer.getTime(applyZero=True)
             self.sound.play()
+            
+            #sound.duration 
             for _ in utils.wait_until_yield(self.task_timer,
                                             track_onset + self.sound.duration + self.sr_buffer,
                                             keyboard_accuracy=.1):
@@ -414,6 +453,8 @@ class Playlist(Task):
                 "track_name": self.track_name,
                 "onset": track_onset,
                 "offset": track_onset + self.sound.duration
+                
+
             }
 
             yield from self._questionnaire(exp_win, ctl_win,
@@ -434,10 +475,16 @@ class Playlist(Task):
             self.block_end_text.draw(ctl_win)
         yield True
 
-        #final wait
-        print(f"{'*'*25} PREPARE TO STOP {'*'*25}")
+        yield from pause_screen(
+            exp_win, ctl_win,
+            text="We are setting up the scanner for the next block.\n\nPlease wait...",
+            wait_key='8'
+        )
+
+
+        #print(f"{'*'*25} PREPARE TO STOP {'*'*25}")
         yield from utils.wait_until_yield(self.task_timer, previous_track_offset + self.final_wait)
-        print(f"{'#'*25} STOP SCANNER    {'#'*25}")
+        #print(f"{'#'*25} STOP SCANNER    {'#'*25}")
 
     def _stop(self, exp_win, ctl_win):
         if hasattr(self, 'sound'):
