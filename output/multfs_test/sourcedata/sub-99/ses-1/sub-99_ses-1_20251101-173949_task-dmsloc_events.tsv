@@ -1,0 +1,5 @@
+﻿TrialNumber	stim1	objmod1	loc1	stim2	objmod2	loc2	action	ref1	ref2	ran	order	late_responses_0	stimulus_0_onset	stimulus_0_offset	late_responses_1	stimulus_1_onset	stimulus_1_offset
+1	7	7	1	5	1	1	True	7	5	1.0	0.0	[]	2.998592	4.486893	[]	6.226701	7.7170596
+2	7	7	1	0	0	0	False	7	0	1.0	1.0	[]	12.445067	13.937268	[]	15.678104	17.167166
+3	0	4	0	6	6	1	False	0	6	1.0	2.0	[]	21.893742	23.387665	[]	25.126663	26.61763
+4	4	0	1	7	7	1	True	4	7	1.0	3.0	[]	31.345726	32.836708	[]	34.576183	36.068928

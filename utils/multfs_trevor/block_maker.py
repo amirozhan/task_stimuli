@@ -42,8 +42,8 @@ def partition_df_into_blocks(df: pd.DataFrame, n_blocks: int, seed: Optional[int
 # ---------------- MAIN ----------------
 if __name__ == "__main__":
     # --- CONFIG ---
-    tcs_dir = Path("/Users/lucasgomez/Desktop/Neuro/Bashivan/Music2Brain/ozhan_branch/task_stimuli/data/multfs/updated_cond_file/trevor/tcs")
-    blocks_dir = Path("/Users/lucasgomez/Desktop/Neuro/Bashivan/Music2Brain/ozhan_branch/task_stimuli/data/multfs/updated_cond_file/trevor/blockfiles")
+    tcs_dir = Path("/Users/lucasgomez/Desktop/Neuro/Bashivan/Music2Brain/ozhan_branch/task_stimuli/data/multfs/trevor/tcs")
+    blocks_dir = Path("/Users/lucasgomez/Desktop/Neuro/Bashivan/Music2Brain/ozhan_branch/task_stimuli/data/multfs/trevor/blockfiles")
     blocks_dir.mkdir(parents=True, exist_ok=True)
 
     session = 1
@@ -76,7 +76,7 @@ if __name__ == "__main__":
 
         # Save each block; no overlap between them
         for idx, df_block in enumerate(blocks):
-            os.makedirs(blocks_dir / f"0{session}", exist_ok=True)
-            out_csv = blocks_dir / f"0{session}" / f"{task}_block_{idx}.csv"   # e.g., ctxdm_col_block0.csv, ctxdm_col_block1.csv
+            os.makedirs(blocks_dir / f"session0{session}", exist_ok=True)
+            out_csv = blocks_dir / f"session0{session}" / f"{task}_block_{idx}.csv"   # e.g., ctxdm_col_block0.csv, ctxdm_col_block1.csv
             df_block.to_csv(out_csv, index=False)
             print(f"[OK] {task}: wrote block {idx} with {len(df_block)} rows → {out_csv.name}")

@@ -1,0 +1,5 @@
+stim1,objmod1,loc1,stim2,objmod2,loc2,action,ref1,ref2
+7,7,1,5,1,1,True,7,5
+7,7,1,0,0,0,False,7,0
+0,4,0,6,6,1,False,0,6
+4,0,1,7,7,1,True,4,7
