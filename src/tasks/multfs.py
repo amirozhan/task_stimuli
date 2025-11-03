@@ -58,7 +58,8 @@ class multfs_base(Task):
             When ready press 3.
             """
         self.abbrev_instruction = abbrev_instructions_converter(self.task_name)
-        # print("abbrev instruction:", self.abbrev_instruction)
+        # print("abbrev instruction:", self.abbrev_instructionobal start time )
+        self.start_time = "DNS" # to tag output files
         self.globalClock = core.Clock() # to track the time since experiment start
         self.routineTimer = core.Clock() # to track time remaining of each (possibly non-slip) routine
         self.frameTolerance = 0.001 # how close to onset before 'same' frame
@@ -185,18 +186,33 @@ class multfs_base(Task):
         )
         yield True
 
+    def _generate_unique_filename(self, suffix, time, ext="tsv"):
+        fname = os.path.join(
+            self.output_path, f"{self.output_fname_base}_{self.name}_{suffix}_{time}.{ext}"
+        )
+        fi = 1
+        while os.path.exists(fname):
+            fname = os.path.join(
+                self.output_path,
+                f"{self.output_fname_base}_{self.name}_{suffix}-{fi:03d}_{time}.{ext}",
+            )
+            fi += 1
+        return fname
+
     def _save(self):
         if hasattr(self, 'trials'):
-            self.trials.saveAsWideText(self._generate_unique_filename("events", "tsv"))
+            self.trials.saveAsWideText(self._generate_unique_filename("events", self.start_time, "tsv"))
         return None
 
     def _run(self, exp_win, ctl_win):
-        print("START TIME:", self.globalClock.getTime())
-        # import pdb; pdb.set_trace()
+        self.start_time = time.strftime("%H%M%S") # update to tag output files
+        print("START TIME:", self.start_time)
         self.fixation.draw()
         yield True
+
         self.trials = data.TrialHandler(self.item_list, 1, method=self._trial_sampling_method)
         n_trials = len(self.trials.trialList)
+        
         exp_win.logOnFlip(
             level=logging.EXP, msg=f"memory: {self.name} starting"
         )
@@ -216,8 +232,8 @@ class multfs_base(Task):
 
         trial_idx = 0
         for trial in self.trials:
-            trial_time_start = self.globalClock.getTime()
             exp_win.logOnFlip(level=logging.EXP, msg=f"{self.name}_{self.feature}: trial {trial_idx}")
+
 
             for n_stim in range(self.seq_len):
                 onset = (
@@ -280,10 +296,8 @@ class multfs_base(Task):
                 break
 
             trial_idx += 1
-            print(f"trial {trial_idx} took {self.globalClock.getTime() - trial_time_start} seconds")
 
         baseline_offset = onset + STIMULI_DURATION + self.trial_isis[-1] + FINAL_WAIT
-        print(f"baseline_offset {baseline_offset}")
         # Draw final wait text
         final_wait_txt.draw()
         yield True
@@ -291,7 +305,7 @@ class multfs_base(Task):
             self.task_timer,
             baseline_offset - 1./config.FRAME_RATE)
         yield True
-        print("END TIME:", self.globalClock.getTime())
+        print("END TIME:", self.start_time)
 
 
 class multfs_dms(multfs_base):
