@@ -305,7 +305,6 @@ class multfs_base(Task):
             self.task_timer,
             baseline_offset - 1./config.FRAME_RATE)
         yield True
-        print("END TIME:", time.strftime("%H:%M:%S"))
 
 
 class multfs_dms(multfs_base):
