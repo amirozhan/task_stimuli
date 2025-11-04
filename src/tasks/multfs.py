@@ -205,7 +205,7 @@ class multfs_base(Task):
         return None
 
     def _run(self, exp_win, ctl_win):
-        self.start_time = time.strftime("%H%M%S") # update to tag output files
+        self.start_time = time.strftime("%H:%M:%S") # update to tag output files
         print("START TIME:", self.start_time)
         self.fixation.draw()
         yield True
@@ -214,7 +214,7 @@ class multfs_base(Task):
         n_trials = len(self.trials.trialList)
         
         exp_win.logOnFlip(
-            level=logging.EXP, msg=f"memory: {self.name} starting"
+            level=logging.EXP, msg=f"task: {self.name} started at {self.start_time}"
         )
 
         img = visual.ImageStim(exp_win, size=STIMULI_SIZE, units="norm", flipHoriz=config.MIRROR_X)
@@ -305,7 +305,7 @@ class multfs_base(Task):
             self.task_timer,
             baseline_offset - 1./config.FRAME_RATE)
         yield True
-        print("END TIME:", self.start_time)
+        print("END TIME:", time.strftime("%H:%M:%S"))
 
 
 class multfs_dms(multfs_base):
