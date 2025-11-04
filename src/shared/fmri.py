@@ -1,5 +1,6 @@
 from psychopy import core, event, logging
 import time
+import datetime
 from . import utils
 
 MR_settings = {
@@ -27,8 +28,7 @@ def wait_for_ttl():
     logging.exp(msg="waiting for fMRI TTL")
     while True:
         if get_ttl():
-            # TODO: log real timing of TTL?
-            logging.exp(msg="fMRI TTL %d" % ttl_index)
+            logging.exp(msg=f"fMRI TTL{ttl_index} received at {datetime.now().strftime('%H:%M:%S')}")
             ttl_index += 1
             return
         time.sleep(0.0005)  # just to avoid looping to fast
