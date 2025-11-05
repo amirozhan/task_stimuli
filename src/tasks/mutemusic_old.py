@@ -1,7 +1,6 @@
 import os, time, pandas,re
 import warnings
 from psychopy import logging
-from datetime import datetime, timezone #added timezone
 
 warnings.filterwarnings("ignore")             # suppress Python warnings
 logging.console.setLevel(logging.CRITICAL+1) 
@@ -11,7 +10,7 @@ prefs.hardware['audioLib'] = ['ptb']
 
 from psychopy import visual, sound, event, core, logging
 
-from ..tasks import video, task_base
+from . import video, task_base
 
 
 from .task_base import Task
@@ -63,9 +62,6 @@ AUDITORY_IMAGERY_ASSESSMENT = (
     RATING_PROMPT,
     ["didn't like it at all", "", "neutral", "", "really liked it"]
 )
-
-def wall_time_iso(): #added timezone
-    return datetime.now(timezone.utc).astimezone().isoformat(timespec="milliseconds")
 
 def pause_screen(exp_win, ctl_win, text="We are setting up the scanner for the next block.\n\nPlease wait...",
                  wait_key='8', height=0.045):
@@ -338,12 +334,9 @@ class Playlist(Task):
                 yield True
 
                 # Wait 2 seconds before feedback
-                response_wall_iso   = wall_time_iso()
-                response_wall_epoch = float(time.time())
                 core.wait(2.0)
 
                 # Log response
-               
                 final_press = {
                     "track": self._current_seg["track_name"],
                     "path": self._current_seg["path"],
@@ -353,13 +346,7 @@ class Playlist(Task):
                     "offset": float(self._current_seg['offset']),
                     "question": question,
                     "value": score,
-                    "confirmation": "yes",
-                    "play_cmd_wall_iso":   self._current_seg.get("play_cmd_wall_iso"),
-                    "play_cmd_wall_epoch": self._current_seg.get("play_cmd_wall_epoch"),
-                    "q_start_wall_iso":    self._current_seg.get("q_start_wall_iso"),
-                    "q_start_wall_epoch":  self._current_seg.get("q_start_wall_epoch"),
-                    "response_wall_iso":   response_wall_iso,
-                    "response_wall_epoch": response_wall_epoch
+                    "confirmation": "yes"
                 }
                 
             if flip_count > 1:
@@ -388,8 +375,6 @@ class Playlist(Task):
 
         if final_press == None:
             # Timeout: record default response
-            response_wall_iso   = wall_time_iso()
-            response_wall_epoch = float(time.time())
             self._events.append({
                 "track": self._current_seg["track_name"],
                 "path": self._current_seg["path"],
@@ -399,14 +384,8 @@ class Playlist(Task):
                 "offset": float(self._current_seg['offset']),
                 "question": question,
                 "value": -1,
-                "confirmation": "no",
-                "play_cmd_wall_iso":   self._current_seg.get("play_cmd_wall_iso"),
-                "play_cmd_wall_epoch": self._current_seg.get("play_cmd_wall_epoch"),
-                "q_start_wall_iso":    self._current_seg.get("q_start_wall_iso"),
-                "q_start_wall_epoch":  self._current_seg.get("q_start_wall_epoch"),
-                "response_wall_iso":   response_wall_iso,
-                "response_wall_epoch": response_wall_epoch,
-                            })
+                "confirmation": "no"
+            })
         else:
             self._events.append(final_press)
 
@@ -454,11 +433,7 @@ class Playlist(Task):
 
             #track playing (variable timing)
             track_onset = self.task_timer.getTime(applyZero=True)
-
-            play_cmd_wall_iso   = wall_time_iso() #added timezone
-            play_cmd_wall_epoch = float(time.time()) #unix epoch time
             self.sound.play()
-
             
             #sound.duration 
             for _ in utils.wait_until_yield(self.task_timer,
@@ -471,21 +446,14 @@ class Playlist(Task):
                 pass
 
             #display Questionnaire (variable timing, max 5s)
-
-            q_start_wall_iso   = wall_time_iso()
-            q_start_wall_epoch = float(time.time())
-
             self._current_seg = {
                 "path": os.path.abspath(track_path),
                 "segment_start": seg_start,
                 "segment_len": seg_dur,
                 "track_name": self.track_name,
                 "onset": track_onset,
-                "offset": track_onset + self.sound.duration,
-                "play_cmd_wall_iso":   play_cmd_wall_iso,
-                "play_cmd_wall_epoch": play_cmd_wall_epoch,
-                "q_start_wall_iso":    q_start_wall_iso,
-                "q_start_wall_epoch":  q_start_wall_epoch,
+                "offset": track_onset + self.sound.duration
+                
 
             }
 
@@ -539,12 +507,6 @@ class Playlist(Task):
                 "confirmation": e.get("confirmation"),
                 "onset": float(e.get("onset")),
                 "offset": float(e.get("offset")),
-                "play_cmd_wall_iso":   e.get("play_cmd_wall_iso"),
-                "play_cmd_wall_epoch": e.get("play_cmd_wall_epoch"),
-                "q_start_wall_iso":    e.get("q_start_wall_iso"),
-                "q_start_wall_epoch":  e.get("q_start_wall_epoch"),
-                "response_wall_iso":   e.get("response_wall_iso"),
-                "response_wall_epoch": e.get("response_wall_epoch"),
             })
         ev_df = pd.DataFrame(ev_rows)
 

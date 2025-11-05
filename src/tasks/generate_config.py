@@ -160,7 +160,7 @@ def generate_segments_json_split(
     return out_shared, out_favorite
 
 main_path = r"C:\Users\Bashivan Lab\Desktop\NACC\task_stimuli\data\mutemusic"
-sub = "00"
+sub = "01"
 
 subject_dir = Path(main_path) / f"Sub-{sub}" / "music"
 #subject_dir.mkdir(parents=True, exist_ok=True)  # just in case
