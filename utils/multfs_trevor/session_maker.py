@@ -8,8 +8,8 @@ if __name__ == "__main__":
     session = 1
     seed = 0  # used to shuffle/partition per task
 
-    block_dir = f"/Users/lucasgomez/Desktop/Neuro/Bashivan/Music2Brain/ozhan_branch/task_stimuli/data/multfs/trevor/blockfiles/session0{session}"
-    studyds_dir = "/Users/lucasgomez/Desktop/Neuro/Bashivan/Music2Brain/ozhan_branch/task_stimuli/data/multfs/trevor/study_designs"
+    block_dir = f"/Users/lucasgomez/Desktop/Neuro/Bashivan/MGH_NACC+MULTFS/MULTFS/task_stimuli/data/multfs/trevor/blockfiles/session0{session}"
+    studyds_dir = "/Users/lucasgomez/Desktop/Neuro/Bashivan/MGH_NACC+MULTFS/MULTFS/task_stimuli/data/multfs/trevor/study_designs"
 
     # get block file names with .csv stripped
     block_file_names = [f[:-4] for f in os.listdir(block_dir) if f.endswith('.csv')]

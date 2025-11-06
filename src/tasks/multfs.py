@@ -232,6 +232,7 @@ class multfs_base(Task):
 
         trial_idx = 0
         for trial in self.trials:
+            trial_start_time = self.task_timer.getTime()
             exp_win.logOnFlip(level=logging.EXP, msg=f"{self.name}_{self.feature}: trial {trial_idx}")
 
 
@@ -281,7 +282,7 @@ class multfs_base(Task):
                     if len(multfs_answer_keys):
                         self.trials.addData("response_%d" % n_stim, multfs_answer_keys[-1][0])
                         self.trials.addData("response_%d_time" % n_stim, multfs_answer_keys[-1][1])
-                        self.trials.addData("all_responses_%d" % n_stim, multfs_answer_keys)                
+                        self.trials.addData("all_responses_%d" % n_stim, multfs_answer_keys)    
 
             self.fixation.draw()
             yield True
@@ -294,6 +295,9 @@ class multfs_base(Task):
             if trial_idx >= n_trials:
                 self.trials.addData("trial_end", self.task_timer.getTime())
                 break
+
+            trial_end_time = self.task_timer.getTime()
+            print(f"Trial {trial_idx} time: {trial_end_time - trial_start_time:.3f} seconds")
 
             trial_idx += 1
 
@@ -339,7 +343,7 @@ class multfs_CTXDM(multfs_base):
         self.feature = feature
         self.session = session 
         self.no_response_frames = [0, 1]
-        self.trial_isis = [SHORT_ISI_BASE, SHORT_ISI_BASE, LONG_ISI_BASE]
+        self.trial_isis = [SHORT_ISI_BASE, LONG_ISI_BASE, LONG_ISI_BASE]
         self.n_trials = n_trials
 
 class multfs_interdms_ABAB(multfs_base):

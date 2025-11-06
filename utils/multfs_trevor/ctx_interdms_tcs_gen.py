@@ -152,12 +152,12 @@ def check_unique_tcs(tcs: List[str]) -> bool:
 
 if __name__ == "__main__":
     # Output dir
-    tcs_dir = "/Users/lucasgomez/Desktop/Neuro/Bashivan/Music2Brain/ozhan_branch/task_stimuli/data/multfs/trevor/tcs"
+    tcs_dir = "/Users/lucasgomez/Desktop/Neuro/Bashivan/MGH_NACC+MULTFS/MULTFS/task_stimuli/data/multfs/trevor/tcs"
 
     # ntcs variant mapping
     ntcs_variants = {
-        "col": 30,
-        "lco": 30,
+        "col": 26,
+        "lco": 26,
         "loc_ABAB": 7,
         "loc_ABBA": 7,
         "ctg_ABAB": 7,

@@ -42,8 +42,8 @@ def partition_df_into_blocks(df: pd.DataFrame, n_blocks: int, seed: Optional[int
 # ---------------- MAIN ----------------
 if __name__ == "__main__":
     # --- CONFIG ---
-    tcs_dir = Path("/Users/lucasgomez/Desktop/Neuro/Bashivan/Music2Brain/ozhan_branch/task_stimuli/data/multfs/trevor/tcs")
-    blocks_dir = Path("/Users/lucasgomez/Desktop/Neuro/Bashivan/Music2Brain/ozhan_branch/task_stimuli/data/multfs/trevor/blockfiles")
+    tcs_dir = Path("/Users/lucasgomez/Desktop/Neuro/Bashivan/MGH_NACC+MULTFS/MULTFS/task_stimuli/data/multfs/trevor/tcs")
+    blocks_dir = Path("/Users/lucasgomez/Desktop/Neuro/Bashivan/MGH_NACC+MULTFS/MULTFS/task_stimuli/data/multfs/trevor/blockfiles")
     blocks_dir.mkdir(parents=True, exist_ok=True)
 
     session = 1
