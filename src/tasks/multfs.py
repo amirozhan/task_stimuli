@@ -377,81 +377,81 @@ INSTRUCTIONS_DONE = """1 = yes
 def instructions_converter(task_name):
     ins_dict = {
         "dms_loc": """
-            In this task, trials will have 2 objects. You must do the following:\n
+            In this task, trials will be a sequence of 2 objects. You must do the following:\n
             - When Object 2 appears, answer whether its LOCATION matches Object 1.\n
             """,
 
         "dms_obj": """
-            In this task, trials will have 2 objects. You must do the following:\n
+            In this task, trials will be a sequence of 2 objects. You must do the following:\n
             - When Object 2 appears, answer whether its IDENTITY matches Object 1.\n
             """,
 
         "interdms_loc_ABBA": """
-            In this task, trials will have 4 objects. You must do the following:\n
+            In this task, trials will be a sequence of 4 objects. You must do the following:\n
             Pattern ABBA — feature: LOCATION\n
             - When Object 3 appears, answer whether its LOCATION matches Object 2.\n
             - When Object 4 appears, answer whether its LOCATION matches Object 1.\n
             """,
 
         "interdms_ctg_ABBA": """
-            In this task, trials will have 4 objects. You must do the following:\n
+            In this task, trials will be a sequence of 4 objects. You must do the following:\n
             Pattern ABBA — feature: CATEGORY\n
             - When Object 3 appears, answer whether its CATEGORY matches Object 2.\n
             - When Object 4 appears, answer whether its CATEGORY matches Object 1.\n
             """,
 
         "interdms_obj_ABBA": """
-            In this task, trials will have 4 objects. You must do the following:\n
+            In this task, trials will be a sequence of 4 objects. You must do the following:\n
             Pattern ABBA — feature: IDENTITY\n
             - When Object 3 appears, answer whether its IDENTITY matches Object 2.\n
             - When Object 4 appears, answer whether its IDENTITY matches Object 1.\n
             """,
 
         "interdms_loc_ABAB": """
-            In this task, trials will have 4 objects. You must do the following:\n
+            In this task, trials will be a sequence of 4 objects. You must do the following:\n
             Pattern ABAB — feature: LOCATION\n
             - When Object 3 appears, answer whether its LOCATION matches Object 1.\n
             - When Object 4 appears, answer whether its LOCATION matches Object 2.\n
             """,
 
         "interdms_ctg_ABAB": """
-            In this task, trials will have 4 objects. You must do the following:\n
+            In this task, trials will be a sequence of 4 objects. You must do the following:\n
             Pattern ABAB — feature: CATEGORY\n
             - When Object 3 appears, answer whether its CATEGORY matches Object 1.\n
             - When Object 4 appears, answer whether its CATEGORY matches Object 2.\n
             """,
 
         "interdms_obj_ABAB": """
-            In this task, trials will have 4 objects. You must do the following:\n
+            In this task, trials will be a sequence of 4 objects. You must do the following:\n
             Pattern ABAB — feature: IDENTITY\n
             - When Object 3 appears, answer whether its IDENTITY matches Object 1.\n
             - When Object 4 appears, answer whether its IDENTITY matches Object 2.\n
             """,
 
         "1back_loc": """
-            In this task, trials will have 6 objects. You must do the following:\n
+            In this task, trials will be a sequence of 6 objects. You must do the following:\n
             - For each new object (Object n+1), answer whether its LOCATION matches the previous object (Object n).\n
             """,
 
         "1back_obj": """
-            In this task, trials will have 6 objects. You must do the following:\n
+            In this task, trials will be a sequence of 6 objects. You must do the following:\n
             - For each new object (Object n+1), answer whether its IDENTITY matches the previous object (Object n).\n
             """,
 
         "1back_ctg": """
-            In this task, trials will have 6 objects. You must do the following:\n
+            In this task, trials will be a sequence of 6 objects. You must do the following:\n
             - For each new object (Object n+1), answer whether its CATEGORY matches the previous object (Object n).\n
             """,
 
         "ctxdm_col": """
-            In this task, trials will have 3 objects. You must do the following:\n
+            In this task, trials will be a sequence of 3 objects. You must do the following:\n
             Contextual Decision-Making: CATEGORY → IDENTITY → LOCATION\n
             - If Objects 1 and 2 match in CATEGORY, answer whether Object 3 matches Object 2 by IDENTITY.\n
             - Otherwise, answer whether Object 3 matches Object 2 by LOCATION.\n
             """,
 
         "ctxdm_lco": """
-            In this task, trials will have 3 objects. You must do the following:\n
+            In this task, trials will be a sequence of 3 objects. You must do the following:\n
             Contextual Decision-Making: LOCATION → CATEGORY → IDENTITY\n
             - If Objects 1 and 2 match in LOCATION, answer whether Object 3 matches Object 2 by CATEGORY.\n
             - Otherwise, answer whether Object 3 matches Object 2 by IDENTITY.\n
