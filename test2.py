@@ -1,18 +1,17 @@
-import os
-os.environ['PSYCHOPY_AUDIO_LIBRARY'] = 'sounddevice'  # belt & suspenders
+import os, time, pandas
 
-import sounddevice as sd
-OUTPUT_IDX = 1            # <-- your chosen output index
-sd.default.device = (None, OUTPUT_IDX)
-sd.default.samplerate = 48000
 
-# Use the sounddevice backend class directly:
-from psychopy.sound.backend_sounddevice import SoundDeviceSound as Sound
 
-# test
-snd = Sound('A', secs=0.5, volume=1.0)
+# import sounddevice as sd
+# sd.default.device = (None, 1)
+
+from psychopy import prefs
+prefs.hardware['audioLib'] =['ptb']
+
+from psychopy import core
+from psychopy import sound as pysound
+track_path = r'C:\Users\Bashivan Lab\Desktop\NACC\task_stimuli\data\mutemusic\Sub-01\music\shared\track1.mp3'
+snd = pysound.Sound(track_path,volume=5)
+print("Duration:", getattr(snd, "duration", None))  # should be > 0
 snd.play()
-sd.wait()
-
-# sanity: confirm which class you’re using
-print("Sound class:", Sound)
+core.wait(120)
