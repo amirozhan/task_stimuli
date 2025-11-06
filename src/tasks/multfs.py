@@ -205,7 +205,7 @@ class multfs_base(Task):
         return None
 
     def _run(self, exp_win, ctl_win):
-        self.start_time = time.strftime("%H:%M:%S") # update to tag output files
+        self.start_time = time.strftime("%H-%M-%S") # update to tag output files
         print("START TIME:", self.start_time)
         self.fixation.draw()
         yield True
