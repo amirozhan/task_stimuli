@@ -46,8 +46,8 @@ if __name__ == "__main__":
     blocks_dir = Path("/Users/lucasgomez/Desktop/Neuro/Bashivan/MGH_NACC+MULTFS/MULTFS/task_stimuli/data/multfs/trevor/blockfiles")
     blocks_dir.mkdir(parents=True, exist_ok=True)
 
-    session = 1
-    seed = 0  # used to shuffle/partition per task
+    session = 2
+    seed = 1  # used to shuffle/partition per task
 
     # How many blocks per session per task
     block_map = {
@@ -66,7 +66,10 @@ if __name__ == "__main__":
 
     # ----- Make blocks for all tasks in block_map -----
     for task, n_blocks in block_map.items():
-        in_csv = tcs_dir / f"{task}_session0{session}.csv"
+        if '1back' in task:
+            in_csv = tcs_dir / f"{task}_session0{session}.csv"
+        else:
+            in_csv = tcs_dir / f"{task}.csv"
         if not in_csv.exists():
             print(f"[SKIP] Missing input: {in_csv}")
             continue

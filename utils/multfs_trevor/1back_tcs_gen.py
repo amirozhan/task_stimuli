@@ -284,12 +284,12 @@ if __name__ == "__main__":
     from pathlib import Path
 
     # Output dir
-    tcs_dir = Path("/Users/lucasgomez/Desktop/Neuro/Bashivan/Music2Brain/ozhan_branch/task_stimuli/data/multfs/trevor/tcs")
+    tcs_dir = Path("/Users/lucasgomez/Desktop/Neuro/Bashivan/MGH_NACC+MULTFS/MULTFS/task_stimuli/data/multfs/trevor/tcs")
     os.makedirs(tcs_dir, exist_ok=True)
 
     def run_and_save(task_name, seed):
         print(f"\n----- Generating 1back block for {task_name} -----")
-        dfs = generate_oneback_sessions(ntcs=50, sessions=4, seq_len=6, seed=seed, include_chain_col=True)
+        dfs = generate_oneback_sessions(ntcs=50, sessions=2, seq_len=6, seed=seed, include_chain_col=True)
 
         # Per-session checks
         for i, df in enumerate(dfs, start=1):

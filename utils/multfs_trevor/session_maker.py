@@ -5,8 +5,8 @@ import pandas as pd
 # ---------------- MAIN ----------------
 if __name__ == "__main__":
     sub = '01'
-    session = 1
-    seed = 0  # used to shuffle/partition per task
+    session = 2
+    seed = (session - 1)*20001105  # used to shuffle/partition per task
 
     block_dir = f"/Users/lucasgomez/Desktop/Neuro/Bashivan/MGH_NACC+MULTFS/MULTFS/task_stimuli/data/multfs/trevor/blockfiles/session0{session}"
     studyds_dir = "/Users/lucasgomez/Desktop/Neuro/Bashivan/MGH_NACC+MULTFS/MULTFS/task_stimuli/data/multfs/trevor/study_designs"
@@ -30,8 +30,14 @@ if __name__ == "__main__":
     })
     session_runs['scan_type'] = session_runs['block_file_name'].apply(scan_type_from_name)
 
-    # save to tsv
+    # save or append to TSV
     out_tsv = os.path.join(studyds_dir, f"sub-{sub}_design.tsv")
-    session_runs.to_csv(out_tsv, sep='\t', index=False)
-    print(f"Wrote study design to {out_tsv}")
 
+    if os.path.exists(out_tsv):
+        existing = pd.read_csv(out_tsv, sep='\t')
+        combined = pd.concat([existing, session_runs], ignore_index=True)
+        combined.to_csv(out_tsv, sep='\t', index=False)
+        print(f"Appended to existing study design at {out_tsv}")
+    else:
+        session_runs.to_csv(out_tsv, sep='\t', index=False)
+        print(f"Wrote new study design to {out_tsv}")

@@ -3,3 +3,6 @@
 
 ### Command for Nov 6, Trevor Ses-01
 ```python main.py   --subject 01   --session 1   --tasks multfs   --output output/multfs_v2_tp   --no-force-resolution   --run_on_battery   --skip-soundcheck --fmri```
+
+### Command for Nov 7, Trevor Ses-02
+```python main.py   --subject 01   --session 2   --tasks multfs   --output output/multfs_v2_tp   --no-force-resolution   --run_on_battery   --skip-soundcheck --fmri```
