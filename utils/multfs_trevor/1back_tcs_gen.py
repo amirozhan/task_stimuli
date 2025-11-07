@@ -289,7 +289,7 @@ if __name__ == "__main__":
 
     def run_and_save(task_name, seed):
         print(f"\n----- Generating 1back block for {task_name} -----")
-        dfs = generate_oneback_sessions(ntcs=50, sessions=2, seq_len=6, seed=seed, include_chain_col=True)
+        dfs = generate_oneback_sessions(ntcs=50, sessions=4, seq_len=6, seed=seed, include_chain_col=True)
 
         # Per-session checks
         for i, df in enumerate(dfs, start=1):
