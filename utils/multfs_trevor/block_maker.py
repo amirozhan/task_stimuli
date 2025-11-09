@@ -46,7 +46,7 @@ if __name__ == "__main__":
     blocks_dir = Path("/Users/lucasgomez/Desktop/Neuro/Bashivan/MGH_NACC+MULTFS/MULTFS/task_stimuli/data/multfs/trevor/blockfiles")
     blocks_dir.mkdir(parents=True, exist_ok=True)
 
-    session = 4
+    session = 5
     seed = 1  # used to shuffle/partition per task
 
     # How many blocks per session per task
