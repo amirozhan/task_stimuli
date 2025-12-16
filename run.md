@@ -3,6 +3,8 @@
 
 ### Test restarting from block
 
-python main.py   --subject 03   --session 01 --blocks 1-10 --tasks mutemusic   --output output/AS_sub_02_ses_1   --no-force-resolution   --run_on_battery   --skip-soundcheck --fmri 
+ 
 
 python soundtest.py
+
+python main.py   --subject 02   --session 02 --blocks 1-10 --tasks mutemusic   --output output/AR_sub_02_ses_3   --no-force-resolution   --run_on_battery   --skip-soundcheck --fmri 
