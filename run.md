@@ -7,4 +7,4 @@
 
 python soundtest.py
 
-python main.py   --subject 02   --session 02 --blocks 1-10 --tasks mutemusic   --output output/AR_sub_02_ses_3   --no-force-resolution   --run_on_battery   --skip-soundcheck --fmri 
+python main.py   --subject 02   --session 02 --blocks 11-20 --tasks mutemusic   --output output/AR_sub_02_ses_4   --no-force-resolution   --run_on_battery   --skip-soundcheck --fmri 
