@@ -1,4 +1,4 @@
-loc1,ref1,obj1,ctg1,ang1,loc2,ref2,obj2,ctg2,ang2,loc3,ref3,obj3,ctg3,ang3,loc4,ref4,obj4,ctg4,ang4,loc5,ref5,obj5,ctg5,ang5,loc6,ref6,obj6,ctg6,ang6,tc_nodes,tc_pairs
+loc1,ref1,obj1,ctg1,ang1,loc2,ref2,obj2,ctg2,ang2,loc3,ref3,obj3,ctg3,ang3,loc4,ref4,obj4,ctg4,ang4,loc5,ref5,obj5,ctg5,ang5,loc6,ref6,obj6,ctg6,ang6,tc,tc_pairs
 0,6,3,1,0,1,1,0,0,1,0,6,3,1,0,1,2,1,0,0,0,6,3,1,0,1,5,2,1,1,03_10_03_11_03_12,"03_10,10_03,03_11,11_03,03_12"
 1,4,2,1,0,0,2,1,0,0,1,6,3,1,0,0,5,2,1,1,0,5,2,1,1,0,7,3,1,1,12_01_13_02_02_03,"12_01,01_13,13_02,02_02,02_03"
 0,4,2,1,0,1,4,2,1,0,0,4,2,1,0,1,7,3,1,1,0,6,3,1,0,0,7,3,1,1,02_12_02_13_03_03,"02_12,12_02,02_13,13_03,03_03"
