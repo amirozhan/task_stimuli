@@ -48,12 +48,6 @@ def get_tasks(parsed):
             wait_key='8',
     )
 
-    tasks_idxs = {
-        'interdms': 0,
-        'ctxdm': 0,
-        '1back': 0
-    }
-
     for ri, (_, runs) in enumerate(session_runs.iterrows()):
 
         kwargs = {
@@ -79,7 +73,6 @@ def get_tasks(parsed):
         n_trials = len(pd.read_csv(block_file_path))
 
         if 'interdms' in block_file_name:
-            tasks_idxs['interdms'] += 1
             order = block_file_name.split('_')[2]
             kls = multfs.multfs_interdms_ABAB if order == 'ABAB' else multfs.multfs_interdms_ABBA
             yield kls(
@@ -91,24 +84,9 @@ def get_tasks(parsed):
                 **kwargs
             )
         elif 'ctxdm' in block_file_name:
-            tasks_idxs['ctxdm'] += 1
             yield multfs.multfs_CTXDM(
                 block_file_path,
-                extract_task_name(block_file_name),
-                n_trials,
-                name = f"task-{block_file_name}",
-                feature=feat,
-                **kwargs
-            )
-        elif '1back' in block_file_name:
-            tasks_idxs['1back'] += 1
-            yield multfs.multfs_1back(
-                block_file_path,
-                extract_task_name(block_file_name),
-                n_trials,
-                name = f"task-{block_file_name}",
-                feature=feat,
-                **kwargs
+                extract_task_name(block_file_name), 
             )
 
         yield Pause(
