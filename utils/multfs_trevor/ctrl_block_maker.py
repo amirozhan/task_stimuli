@@ -12,18 +12,19 @@ if not os.path.exists(OUTPUT_DIR):
     os.makedirs(OUTPUT_DIR)
 
 # Study Design
+# Updated Study Design
 STUDY_DESIGN = {
-    "DMSA_CL":             {"8BL": 9, "rnd": 1},
-    "DMSO_LC":             {"10v": 9, "rnd": 1},
-    "OnebackA_LO":         {"46": 2, "8BL": 1, "9-46d": 2, "p9-46v": 1, "rnd": 1},
-    "OnebackO_LO":         {"46": 2, "8C": 1, "9-46d": 1, "p9-46v": 2, "rnd": 1},
-    "Twoback_LOC":         {"10v": 2, "8BL": 1, "8C": 1, "9-46d": 1, "p9-46v": 1, "rnd": 1},
-    "Twoback_CTG":         {"10v": 2, "8BL": 1, "8C": 1, "9-46d": 1, "p9-46v": 1, "rnd": 1},
-    "InterDMS_LOC_ABCABC": {"46": 2, "8C": 2, "p9-46v": 1, "rnd": 1}, 
-    "InterDMS_LOC_ABBCCA": {"46": 2, "8C": 2, "9-46d": 1,  "rnd": 1},
-    "InterDMS_CTG_ABBCCA": {"8BL": 1, "9-46d": 2, "p9-46v": 2, "rnd": 1},
-    "ctxDM_OLC":           {"10v": 2, "8BL": 1, "9-46d": 1, "p9-46v": 1, "rnd": 1},
-    "ctxDM_LOL":           {"10v": 1, "8BL": 2, "8C": 2, "rnd": 1}
+    "DMSA_CL":             {"8BL": 10, "rnd": 1},
+    "DMSO_LC":             {"10v": 10, "rnd": 1},
+    "OnebackA_LO":         {"46": 3, "8BL": 2, "9-46d": 2, "p9-46v": 2, "rnd": 1},
+    "OnebackO_LO":         {"46": 3, "8C": 2, "9-46d": 2, "p9-46v": 2, "rnd": 1},
+    "Twoback_LOC":         {"10v": 2, "8BL": 1, "8C": 2, "9-46d": 2, "p9-46v": 2, "rnd": 1},
+    "Twoback_CTG":         {"10v": 2, "8BL": 1, "8C": 2, "9-46d": 2, "p9-46v": 2, "rnd": 1},
+    "InterDMS_LOC_ABCABC": {"46": 3, "8C": 2, "p9-46v": 1, "rnd": 1},
+    "InterDMS_LOC_ABBCCA": {"46": 3, "8C": 2, "9-46d": 1, "rnd": 1},
+    "InterDMS_CTG_ABBCCA": {"8BL": 1, "9-46d": 3, "p9-46v": 2, "rnd": 1},
+    "ctxDM_OLC":           {"10v": 3, "8BL": 3, "9-46d": 1, "p9-46v": 1, "rnd": 1},
+    "ctxDM_LOL":           {"10v": 3, "8BL": 3, "8C": 2, "rnd": 1}
 }
 
 # Task Stimuli Counts (CRITICAL: These define the columns generated)

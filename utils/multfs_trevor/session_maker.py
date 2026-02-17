@@ -21,7 +21,7 @@ if __name__ == "__main__":
     # mapping function: ctxdm -> A, interdms -> B, 1back -> C
     def scan_type_from_name(name: str) -> str:
         task_root = name.split('_', 1)[0]  # 'ctxdm', 'interdms', '1back', etc.
-        return {'ctxdm': 'A', 'interdms': 'B', '1back': 'C', 'interdms2': 'D', '2back': 'E', 'dms': 'F'}.get(task_root, 'UNKNOWN')
+        return {'ctxdm': 'A', 'interdms2': 'B', '1back': 'C', '2back': 'C', 'dms': 'D'}.get(task_root, 'UNKNOWN')
 
     # create a dataframe with columns ['session', 'block_file_name', 'scan_type']
     session_runs = pd.DataFrame({
