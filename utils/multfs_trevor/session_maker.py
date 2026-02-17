@@ -8,8 +8,8 @@ if __name__ == "__main__":
     session = 5
     seed = (session - 1)*20001105  # used to shuffle/partition per task
 
-    block_dir = f"/Users/lucasgomez/Desktop/Neuro/Bashivan/MGH_NACC+MULTFS/MULTFS/task_stimuli/data/multfs/trevor/blockfiles/session0{session}"
-    studyds_dir = "/Users/lucasgomez/Desktop/Neuro/Bashivan/MGH_NACC+MULTFS/MULTFS/task_stimuli/data/multfs/trevor/study_designs"
+    block_dir = f"/home/lucas/projects/task_stimuli/data/multfs/trevor/blockfiles/session0{session}"
+    studyds_dir = "/home/lucas/projects/task_stimuli/data/multfs/trevor/study_designs"
 
     # get block file names with .csv stripped
     block_file_names = [f[:-4] for f in os.listdir(block_dir) if f.endswith('.csv')]
@@ -21,7 +21,7 @@ if __name__ == "__main__":
     # mapping function: ctxdm -> A, interdms -> B, 1back -> C
     def scan_type_from_name(name: str) -> str:
         task_root = name.split('_', 1)[0]  # 'ctxdm', 'interdms', '1back', etc.
-        return {'ctxdm': 'A', 'interdms': 'B', '1back': 'C'}.get(task_root, 'UNKNOWN')
+        return {'ctxdm': 'A', 'interdms': 'B', '1back': 'C', 'interdms2': 'D', '2back': 'E', 'dms': 'F'}.get(task_root, 'UNKNOWN')
 
     # create a dataframe with columns ['session', 'block_file_name', 'scan_type']
     session_runs = pd.DataFrame({
