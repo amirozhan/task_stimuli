@@ -1,7 +1,7 @@
 # Global params
 INITIAL_WAIT = 3
 FINAL_WAIT = 10
-TASK_COUNTS = {"DMS":2, "CTXDM": 2, "INTERDMS": 6, "1BACK": 3, "TWOBACK": 0} 
+TASK_COUNTS = {"CTXDM": 2, "INTERDMS": 6, "1BACK": 3}
 
 # Trial Times
 INTERDMS_TRIAL = 17.65
