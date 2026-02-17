@@ -48,6 +48,15 @@ def get_tasks(parsed):
             wait_key='8',
     )
 
+    tasks_idxs = {
+        'dms': 0,
+        'interdms': 0,
+        'interdms2': 0,
+        'ctxdm': 0,
+        '1back': 0,
+        '2back': 0  
+    }
+
     for ri, (_, runs) in enumerate(session_runs.iterrows()):
 
         kwargs = {
@@ -68,11 +77,31 @@ def get_tasks(parsed):
             }
 
         block_file_name = runs.block_file_name
-        feat = block_file_name.split('_')[1] # TODO get consistent filenaming!
         block_file_path = os.path.join(data_path, f"blockfiles/session{session:02d}", block_file_name + '.csv') 
         n_trials = len(pd.read_csv(block_file_path))
 
-        if 'interdms' in block_file_name:
+        if 'dms' in block_file_name:
+            tasks_idxs['dms'] += 1
+            components = block_file_name.split('_')
+            if len(components) < 4:
+                feat = components[1]
+                op = None
+            else:
+                feat = components[2]
+                op = components[1]
+            yield multfs.multfs_dms(
+                block_file_path,
+                extract_task_name(block_file_name),
+                n_trials,
+                name = f"task-{block_file_name}",
+                feature=feat,
+                op=op,
+                **kwargs
+            )
+
+        elif 'interdms' in block_file_name:
+            tasks_idxs['interdms'] += 1
+            feat = block_file_name.split('_')[1] # TODO get consistent filenaming!
             order = block_file_name.split('_')[2]
             kls = multfs.multfs_interdms_ABAB if order == 'ABAB' else multfs.multfs_interdms_ABBA
             yield kls(
@@ -81,12 +110,67 @@ def get_tasks(parsed):
                 n_trials,
                 name = f"task-{block_file_name}",
                 feature = feat,
+                seq_len=4,
+                **kwargs
+            )
+        elif 'interdms2' in block_file_name:
+            tasks_idxs['interdms2'] += 1
+            feat = block_file_name.split('_')[1] # TODO get consistent filenaming!
+            order = block_file_name.split('_')[2]
+            kls = multfs.multfs_interdms_ABBCCA if order == 'ABBCCA' else multfs.multfs_interdms_ABCABC
+            yield kls(
+                block_file_path,
+                extract_task_name(block_file_name),
+                n_trials,
+                name = f"task-{block_file_name}",
+                feature = feat,
+                seq_len=6,
                 **kwargs
             )
         elif 'ctxdm' in block_file_name:
+            tasks_idxs['ctxdm'] += 1
+            feat = block_file_name.split('_')[1] # TODO get consistent filenaming!
             yield multfs.multfs_CTXDM(
                 block_file_path,
-                extract_task_name(block_file_name), 
+                extract_task_name(block_file_name),
+                n_trials,
+                name = f"task-{block_file_name}",
+                feature=feat,
+                seq_len=3,
+                **kwargs
+            )
+        elif '1back' in block_file_name:
+            tasks_idxs['1back'] += 1
+            components = block_file_name.split('_')
+            if len(components) < 4:
+                feat = components[1] 
+                op = None
+                seq_len = 6
+            else:
+                feat = components[2]
+                op = components[1]
+                seq_len = 5
+            yield multfs.multfs_1back(
+                block_file_path,
+                extract_task_name(block_file_name),
+                n_trials,
+                name = f"task-{block_file_name}",
+                feature=feat,
+                op=op,
+                seq_len=seq_len,
+                **kwargs
+            )
+        elif '2back' in block_file_name:
+            tasks_idxs['2back'] += 1
+            feat = block_file_name.split('_')[1] 
+            yield multfs.multfs_2back(
+                block_file_path,
+                extract_task_name(block_file_name),
+                n_trials,
+                name = f"task-{block_file_name}",
+                feature=feat,
+                seq_len=5,
+                **kwargs
             )
 
         yield Pause(

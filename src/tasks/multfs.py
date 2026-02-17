@@ -233,7 +233,8 @@ class multfs_base(Task):
         trial_idx = 0
         for trial in self.trials:
             trial_start_time = self.task_timer.getTime()
-            exp_win.logOnFlip(level=logging.EXP, msg=f"{self.name}_{self.feature}: trial {trial_idx}")
+            op_str = f'{self.op}_ ' if self.op else ''
+            exp_win.logOnFlip(level=logging.EXP, msg=f"{self.name}_{op_str}{self.feature}: trial {trial_idx}")
 
 
             for n_stim in range(self.seq_len):
@@ -313,10 +314,11 @@ class multfs_base(Task):
 
 class multfs_dms(multfs_base):
 
-    def __init__(self, block_path, task_name, n_trials, feature = "loc", session = None, **kwargs):
+    def __init__(self, block_path, task_name, n_trials, op = None, feature = "loc", session = None, **kwargs):
         super().__init__(block_path, task_name, **kwargs)
 
         self.feature = feature
+        self.op = op
         self.session = session # todo: add progress bar
 
         self.seq_len = 2
@@ -326,13 +328,25 @@ class multfs_dms(multfs_base):
 
 class multfs_1back(multfs_base):
 
-    def __init__(self, block_path, task_name, n_trials, feature = "loc", seq_len=6, session = None, **kwargs):
+    def __init__(self, block_path, task_name, n_trials, op = None, feature = "loc", seq_len=6, session = None, **kwargs):
+        super().__init__(block_path, task_name, **kwargs)
+        self.seq_len = seq_len
+        self.feature = feature
+        self.op = op
+        self.session = session # todo: add progress bar
+        self.no_response_frames = [0]
+        self.trial_isis = [SHORT_ISI_BASE] + [LONG_ISI_BASE] * (seq_len-1)
+        self.n_trials = n_trials
+
+class multfs_2back(multfs_base):
+
+    def __init__(self, block_path, task_name, n_trials, feature = "loc", seq_len=5, session = None, **kwargs):
         super().__init__(block_path, task_name, **kwargs)
         self.seq_len = seq_len
         self.feature = feature
         self.session = session # todo: add progress bar
         self.no_response_frames = [0]
-        self.trial_isis = [SHORT_ISI_BASE] + [LONG_ISI_BASE] * 5
+        self.trial_isis = [SHORT_ISI_BASE, SHORT_ISI_BASE] + [LONG_ISI_BASE] * (seq_len-2)
         self.n_trials = n_trials
 
 class multfs_CTXDM(multfs_base):
@@ -370,12 +384,46 @@ class multfs_interdms_ABBA(multfs_base):
         self.trial_isis = [SHORT_ISI_BASE, SHORT_ISI_BASE, LONG_ISI_BASE, LONG_ISI_BASE]
         self.n_trials = n_trials
 
+class multfs_interdms_ABBCCA(multfs_base):
+
+    def __init__(self, block_path, task_name, n_trials, feature = "loc", pattern = "ABBCCA", seq_len=6, session = None, **kwargs):
+        super().__init__(block_path, task_name, **kwargs)
+        self.seq_len = seq_len
+        self.feature = feature
+        self.pattern = pattern
+        self.session = session # todo: add progress bar
+        self.no_response_frames = [0, 1, 3]
+        self.trial_isis = [SHORT_ISI_BASE, SHORT_ISI_BASE, LONG_ISI_BASE, SHORT_ISI_BASE, LONG_ISI_BASE, LONG_ISI_BASE] 
+        self.n_trials = n_trials
+
+class multfs_interdms_ABCABC(multfs_base):
+    
+    def __init__(self, block_path, task_name, n_trials, feature = "loc", pattern = "ABCABC", seq_len=6, session = None, **kwargs):
+        super().__init__(block_path, task_name, **kwargs)
+        self.seq_len = seq_len
+        self.feature = feature
+        self.pattern = pattern
+        self.session = session # todo: add progress bar
+        self.no_response_frames = [0, 1, 2]
+        self.trial_isis = [SHORT_ISI_BASE, SHORT_ISI_BASE, SHORT_ISI_BASE, LONG_ISI_BASE, LONG_ISI_BASE, LONG_ISI_BASE] 
+        self.n_trials = n_trials
+
 INSTRUCTIONS_DONE = """1 = yes
 2 = no \n\n
 """
 
 def instructions_converter(task_name):
     ins_dict = {
+        "dms_o_lc": """
+            In this task, trials will be a sequence of 2 objects. You must do the following:\n
+            - When Object 2 appears, answer whether its LOCATION OR CATEGORY matches Object 1.\n
+            """,
+
+        "dms_a_cl": """
+            In this task, trials will be a sequence of 2 objects. You must do the following:\n
+            - When Object 2 appears, answer whether its LOCATION AND CATEGORY matches Object 1.\n
+            """,            
+
         "dms_loc": """
             In this task, trials will be a sequence of 2 objects. You must do the following:\n
             - When Object 2 appears, answer whether its LOCATION matches Object 1.\n
@@ -428,6 +476,30 @@ def instructions_converter(task_name):
             - When Object 4 appears, answer whether its IDENTITY matches Object 2.\n
             """,
 
+        "interdms2_loc_ABBCCA": """
+            In this task, trials will be a sequence of 6 objects. You must do the following:\n
+            Pattern ABBCCA — feature: LOCATION\n
+            - When Object 3 appears, answer whether its LOCATION matches Object 2.\n
+            - When Object 5 appears, answer whether its LOCATION matches Object 4.\n
+            - When Object 6 appears, answer whether its LOCATION matches Object 1.\n
+            """,
+        
+        "interdms2_ctg_ABBCCA": """
+            In this task, trials will be a sequence of 6 objects. You must do the following:\n
+            Pattern ABBCCA — feature: CATEGORY\n
+            - When Object 3 appears, answer whether its CATEGORY matches Object 2.\n
+            - When Object 5 appears, answer whether its CATEGORY matches Object 4.\n
+            - When Object 6 appears, answer whether its CATEGORY matches Object 1.\n
+            """,
+                
+        "interdms2_loc_ABCABC": """
+            In this task, trials will be a sequence of 6 objects. You must do the following:\n
+            Pattern ABCABC — feature: LOCATION\n
+            - When Object 4 appears, answer whether its LOCATION matches Object 1.\n
+            - When Object 5 appears, answer whether its LOCATION matches Object 2.\n
+            - When Object 6 appears, answer whether its LOCATION matches Object 3.\n
+            """,        
+
         "1back_loc": """
             In this task, trials will be a sequence of 6 objects. You must do the following:\n
             - For each new object (Object n+1), answer whether its LOCATION matches the previous object (Object n).\n
@@ -443,6 +515,28 @@ def instructions_converter(task_name):
             - For each new object (Object n+1), answer whether its CATEGORY matches the previous object (Object n).\n
             """,
 
+        "1back_o_lo": """
+            In this task, trials will be a sequence of 5 objects. You must do the following:\n
+            - For each new object (Object n+1), answer whether its LOCATION OR IDENTITY matches the previous object (Object n).\n
+            """,
+
+        "1back_a_lo": """
+            In this task, trials will be a sequence of 5 objects. You must do the following:\n
+            - For each new object (Object n+1), answer whether its LOCATION AND IDENTITY matches the previous object (Object n).\n
+            """,
+
+        "2back_loc": """
+            In this task, trials will be a sequence of 5 objects. You must do the following:\n
+            - For each new object (Object n+2), answer whether its LOCATION matches the object shown two steps previous (Object n).\n
+            (Note: You cannot answer for the first two objects, just remember them.)
+            """,            
+
+        "2back_ctg": """
+            In this task, trials will be a sequence of 5 objects. You must do the following:\n
+            - For each new object (Object n+2), answer whether its CATEGORY matches the object shown two steps previous (Object n).\n
+            (Note: You cannot answer for the first two objects, just remember them.)
+            """,                        
+
         "ctxdm_col": """
             In this task, trials will be a sequence of 3 objects. You must do the following:\n
             Contextual Decision-Making: CATEGORY → IDENTITY → LOCATION\n
@@ -456,6 +550,20 @@ def instructions_converter(task_name):
             - If Objects 1 and 2 match in LOCATION, answer whether Object 3 matches Object 2 by CATEGORY.\n
             - Otherwise, answer whether Object 3 matches Object 2 by IDENTITY.\n
             """,
+
+        "ctxdm_olc": """
+            In this task, trials will be a sequence of 3 objects. You must do the following:\n
+            Contextual Decision-Making: IDENTITY → LOCATION → CATEGORY\n
+            - If Objects 1 and 2 match in IDENTITY, answer whether Object 3 matches Object 2 by LOCATION.\n
+            - Otherwise, answer whether Object 3 matches Object 2 by CATEGORY.\n
+            """,
+
+        "ctxdm_lol": """
+            In this task, trials will be a sequence of 3 objects. You must do the following:\n
+            Contextual Decision-Making: LOCATION → IDENTITY → LOCATION\n
+            - If Objects 1 and 2 match in LOCATION, answer whether Object 3 matches Object 2 by IDENTITY.\n
+            - Otherwise, answer whether Object 3 matches Object 2 by LOCATION.\n
+            """,
     }
 
     return ins_dict[task_name]
@@ -463,32 +571,72 @@ def instructions_converter(task_name):
 
 def abbrev_instructions_converter(task_name):
     ins_dict = {
+        "dms_o_lc": "DMS-LOCATION-OR-CATEGORY",
+
+        "dms_a_cl": "DMS-LOCATION-AND-CATEGORY",
+
         "dms_loc": "DMS-LOCATION",
 
         "dms_obj": "DMS-IDENTITY",
 
         "interdms_loc_ABBA": """interDMS-ABBA-LOCATION\n
                               """,
+
         "interdms_ctg_ABBA": """interDMS-ABBA-CATEGORY\n
                                   """,
+
         "interdms_obj_ABBA": """interDMS-ABBA-IDENTITY\n
                                   """,
+
         "interdms_loc_ABAB": """interDMS-ABAB-LOCATION\n
                               """,
+
         "interdms_ctg_ABAB": """interDMS-ABAB-CATEGORY\n
                                   """,
+
         "interdms_obj_ABAB": """interDMS-ABAB-IDENTITY\n
                                   """,
+
+        "interdms2_loc_ABBCCA": """interDMS-ABBCCA-LOCATION\n
+                                  """,
+
+        "interdms2_ctg_ABBCCA": """interDMS-ABBCCA-CATEGORY\n
+                                  """,
+
+        "interdms2_loc_ABCABC": """interDMS-ABCABC-LOCATION\n
+                                  """,                                  
+
         "1back_loc": """1back-LOCATION\n
                     """,
+
         "1back_obj": """1back-IDENTITY\n
                     """,
+
         "1back_ctg": """1back-CATEGORY\n
+                    """,
+
+        "1back_o_lo": """1back-LOCATION-OR-IDENTITY\n
+                    """,
+
+        "1back_a_lo": """1back-LOCATION-AND-IDENTITY\n
+                    """,
+
+        "2back_loc": """2back-LOCATION\n
+                    """,
+
+        "2back_ctg": """2back-CATEGORY\n
                     """,
 
         "ctxdm_col": """ctxDM-CATEGORY-IDENTITY-LOCATION\n
                         """,
+
         "ctxdm_lco": """ctxDM-LOCATION-CATEGORY-IDENTITY\n
+                    """,
+
+        "ctxdm_olc": """ctxDM-IDENTITY-LOCATION-CATEGORY\n
+                    """,    
+
+        "ctxdm_lol": """ctxDM-LOCATION-IDENTITY-LOCATION\n
                     """,
     }
     return ins_dict[task_name]

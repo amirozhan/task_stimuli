@@ -10,8 +10,8 @@
 ### Command for Nov 8 9-11am, Trevor Ses-03
 ```python main.py   --subject 01   --session 3   --tasks multfs   --output output/multfs_v2_tp   --no-force-resolution   --run_on_battery   --skip-soundcheck --fmri```
 
-### Command for Nov 8 1-3pm, Trevor Ses-03
+### Command for Nov 8 1-3pm, Trevor Ses-04
 ```python main.py   --subject 01   --session 4   --tasks multfs   --output output/multfs_v2_tp   --no-force-resolution   --run_on_battery   --skip-soundcheck --fmri```
 
-### Command for Nov 10 11-1pm, Trevor Ses-03
+### Command for Feb 19 10-12pm, Trevor Ses-05
 ```python main.py   --subject 01   --session 5   --tasks multfs   --output output/multfs_v2_tp   --no-force-resolution   --run_on_battery   --skip-soundcheck --fmri```
