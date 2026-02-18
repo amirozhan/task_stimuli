@@ -348,7 +348,7 @@ class multfs_2back(multfs_base):
         self.op = op
 
         self.session = session # todo: add progress bar
-        self.no_response_frames = [0]
+        self.no_response_frames = [0, 1]
         self.trial_isis = [SHORT_ISI_BASE, SHORT_ISI_BASE] + [LONG_ISI_BASE] * (seq_len-2)
         self.n_trials = n_trials
 
