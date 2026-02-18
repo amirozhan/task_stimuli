@@ -5,7 +5,7 @@ import pandas as pd
 # ---------------- MAIN ----------------
 if __name__ == "__main__":
     sub = '01'
-    session = 5
+    session = 6
     seed = (session - 1)*20001105  # used to shuffle/partition per task
 
     block_dir = f"/home/lucas/projects/task_stimuli/data/multfs/trevor/blockfiles/session0{session}"

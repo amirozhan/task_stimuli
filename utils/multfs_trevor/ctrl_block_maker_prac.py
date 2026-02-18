@@ -76,44 +76,6 @@ def get_n_stimuli(task_name):
     print(f"  [WARN] Could not match '{task_name}' to any TASK_PARAM. Defaulting to 6.")
     return 6
 
-def expand_condition_to_row(condition_str, task_name, n_stim_limit, trial_type='outlier'):
-    """
-    Parses a condition string (e.g. '101112').
-    """
-    
-    s = str(condition_str).strip()
-    row = {}
-    tc_list = []
-
-    for i in range(n_stim_limit):
-        chunk = s[i*2 : i*2+2]
-        
-        try:
-            loc_val = int(chunk[0])
-            obj_val = int(chunk[1])
-        except (ValueError, IndexError):
-            loc_val, obj_val = 0, 0
-            
-        idx = i + 1 
-        
-        # Determine Angle/Ref using global random state
-        ang_val = random.randint(0, 1)
-        ref_val = obj_val * 2 + ang_val 
-        
-        row[f'loc{idx}'] = loc_val
-        row[f'ref{idx}'] = ref_val
-        row[f'obj{idx}'] = obj_val
-        row[f'ctg{idx}'] = obj_val // 2
-        row[f'ang{idx}'] = ang_val
-        
-        tc_list.append(f"{loc_val}{obj_val}")
-
-    row['tc'] = '_'.join(tc_list)
-    row['task_name'] = task_name
-    row['trial_type'] = trial_type
-    
-    return row
-
 def generate_random_trial(task_name, n_stimuli):
     row = {}
     tc_list = []
@@ -161,35 +123,6 @@ def main():
         print(f"  > Detected Limit: {expected_n_stim} stimuli")
         
         block_rows = []
-        
-        # 2. PROCESS OUTLIERS
-        for source, count in recipe.items():
-            if source == 'rnd': continue
-            
-            candidates = outliers_df[
-                (outliers_df['Task'] == f"task-{block_name}") & 
-                (outliers_df['ROI'] == source)
-            ]
-            
-            if len(candidates) == 0:
-                raise ValueError(f"No candidates found for block '{block_name}' and source '{source}'. Check your CSV and STUDY_DESIGN.")
-
-            # Sample with random_state for reproducibility
-            if len(candidates) < count:
-                print(f"  [WARN] {source}: Requested {count}, found {len(candidates)}. Resampling.")
-                selected = candidates.sample(n=count, replace=True, random_state=SEED)
-            else:
-                selected = candidates.sample(n=count, replace=False, random_state=SEED)
-            
-            for _, row_series in selected.iterrows():
-                cond_str = row_series['condition']
-                parsed_row = expand_condition_to_row(
-                    cond_str, 
-                    block_name, 
-                    n_stim_limit=expected_n_stim,
-                    trial_type=f'outlier_{source}'
-                )
-                block_rows.append(parsed_row)
 
         # 3. GENERATE RANDOM
         rnd_count = recipe.get('rnd', 0)

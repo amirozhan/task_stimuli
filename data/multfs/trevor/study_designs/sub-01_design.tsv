@@ -62,3 +62,15 @@ session	block_file_name	scan_type
 5	interdms2_ctg_ABBCCA_block_0	B
 5	1back_o_lo_block_0	C
 5	interdms2_loc_ABCABC_block_0	B
+6	dms_a_cl_block_0	D
+6	1back_a_lo_block_0	C
+6	dms_o_lc_block_0	D
+6	1back_o_lo_block_0	C
+6	2back_loc_block_0	C
+6	2back_ctg_block_0	C
+6	interdms2_loc_ABCABC_block_0	B
+6	interdms2_loc_ABBCCA_block_0	B
+6	interdms2_ctg_ABBCCA_block_0	B
+6	ctxdm_olc_block_0	A
+6	ctxdm_lol_block_0	A
+
