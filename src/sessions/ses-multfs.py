@@ -80,25 +80,20 @@ def get_tasks(parsed):
         block_file_path = os.path.join(data_path, f"blockfiles/session{session:02d}", block_file_name + '.csv') 
         n_trials = len(pd.read_csv(block_file_path))
 
-        if 'dms' in block_file_name:
-            tasks_idxs['dms'] += 1
-            components = block_file_name.split('_')
-            if len(components) < 4:
-                feat = components[1]
-                op = None
-            else:
-                feat = components[2]
-                op = components[1]
-            yield multfs.multfs_dms(
+        if 'interdms2' in block_file_name:
+            tasks_idxs['interdms2'] += 1
+            feat = block_file_name.split('_')[1] # TODO get consistent filenaming!
+            order = block_file_name.split('_')[2]
+            kls = multfs.multfs_interdms_ABBCCA if order == 'ABBCCA' else multfs.multfs_interdms_ABCABC
+            yield kls(
                 block_file_path,
                 extract_task_name(block_file_name),
                 n_trials,
                 name = f"task-{block_file_name}",
-                feature=feat,
-                op=op,
+                feature = feat,
+                seq_len=6,
                 **kwargs
             )
-
         elif 'interdms' in block_file_name:
             tasks_idxs['interdms'] += 1
             feat = block_file_name.split('_')[1] # TODO get consistent filenaming!
@@ -111,20 +106,6 @@ def get_tasks(parsed):
                 name = f"task-{block_file_name}",
                 feature = feat,
                 seq_len=4,
-                **kwargs
-            )
-        elif 'interdms2' in block_file_name:
-            tasks_idxs['interdms2'] += 1
-            feat = block_file_name.split('_')[1] # TODO get consistent filenaming!
-            order = block_file_name.split('_')[2]
-            kls = multfs.multfs_interdms_ABBCCA if order == 'ABBCCA' else multfs.multfs_interdms_ABCABC
-            yield kls(
-                block_file_path,
-                extract_task_name(block_file_name),
-                n_trials,
-                name = f"task-{block_file_name}",
-                feature = feat,
-                seq_len=6,
                 **kwargs
             )
         elif 'ctxdm' in block_file_name:
@@ -170,6 +151,24 @@ def get_tasks(parsed):
                 name = f"task-{block_file_name}",
                 feature=feat,
                 seq_len=5,
+                **kwargs
+            )
+        elif 'dms' in block_file_name:
+            tasks_idxs['dms'] += 1
+            components = block_file_name.split('_')
+            if len(components) < 4:
+                feat = components[1]
+                op = None
+            else:
+                feat = components[2]
+                op = components[1]
+            yield multfs.multfs_dms(
+                block_file_path,
+                extract_task_name(block_file_name),
+                n_trials,
+                name = f"task-{block_file_name}",
+                feature=feat,
+                op=op,
                 **kwargs
             )
 

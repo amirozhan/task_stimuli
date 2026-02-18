@@ -333,6 +333,7 @@ class multfs_1back(multfs_base):
         self.seq_len = seq_len
         self.feature = feature
         self.op = op
+
         self.session = session # todo: add progress bar
         self.no_response_frames = [0]
         self.trial_isis = [SHORT_ISI_BASE] + [LONG_ISI_BASE] * (seq_len-1)
@@ -340,10 +341,12 @@ class multfs_1back(multfs_base):
 
 class multfs_2back(multfs_base):
 
-    def __init__(self, block_path, task_name, n_trials, feature = "loc", seq_len=5, session = None, **kwargs):
+    def __init__(self, block_path, task_name, n_trials, op = None, feature = "loc", seq_len=5, session = None, **kwargs):
         super().__init__(block_path, task_name, **kwargs)
         self.seq_len = seq_len
         self.feature = feature
+        self.op = op
+
         self.session = session # todo: add progress bar
         self.no_response_frames = [0]
         self.trial_isis = [SHORT_ISI_BASE, SHORT_ISI_BASE] + [LONG_ISI_BASE] * (seq_len-2)
@@ -351,10 +354,12 @@ class multfs_2back(multfs_base):
 
 class multfs_CTXDM(multfs_base):
 
-    def __init__(self, block_path, task_name, n_trials, feature = "lco", seq_len=3, session = None, **kwargs):
+    def __init__(self, block_path, task_name, n_trials, op = None, feature = "lco", seq_len=3, session = None, **kwargs):
         super().__init__(block_path, task_name, **kwargs)
         self.seq_len = seq_len
         self.feature = feature
+        self.op = op
+
         self.session = session 
         self.no_response_frames = [0, 1]
         self.trial_isis = [SHORT_ISI_BASE, LONG_ISI_BASE, LONG_ISI_BASE]
@@ -362,10 +367,12 @@ class multfs_CTXDM(multfs_base):
 
 class multfs_interdms_ABAB(multfs_base):
 
-    def __init__(self, block_path, task_name, n_trials, feature = "loc", pattern = "ABAB", seq_len=4, session = None, **kwargs):
+    def __init__(self, block_path, task_name, n_trials, op = None, feature = "loc", pattern = "ABAB", seq_len=4, session = None, **kwargs):
         super().__init__(block_path, task_name, **kwargs)
         self.seq_len = seq_len
         self.feature = feature
+        self.op = op
+
         self.pattern = pattern
         self.session = session # todo: add progress bar
         self.no_response_frames = [0, 1]
@@ -374,10 +381,12 @@ class multfs_interdms_ABAB(multfs_base):
 
 class multfs_interdms_ABBA(multfs_base):
 
-    def __init__(self, block_path, task_name, n_trials, feature = "loc", pattern = "ABBA", seq_len=4, session = None, **kwargs):
+    def __init__(self, block_path, task_name, n_trials, op = None, feature = "loc", pattern = "ABBA", seq_len=4, session = None, **kwargs):
         super().__init__(block_path, task_name, **kwargs)
         self.seq_len = seq_len
         self.feature = feature
+        self.op = op
+
         self.pattern = pattern
         self.session = session 
         self.no_response_frames = [0, 1]
@@ -386,10 +395,12 @@ class multfs_interdms_ABBA(multfs_base):
 
 class multfs_interdms_ABBCCA(multfs_base):
 
-    def __init__(self, block_path, task_name, n_trials, feature = "loc", pattern = "ABBCCA", seq_len=6, session = None, **kwargs):
+    def __init__(self, block_path, task_name, n_trials, op = None, feature = "loc", pattern = "ABBCCA", seq_len=6, session = None, **kwargs):
         super().__init__(block_path, task_name, **kwargs)
         self.seq_len = seq_len
         self.feature = feature
+        self.op = op
+
         self.pattern = pattern
         self.session = session # todo: add progress bar
         self.no_response_frames = [0, 1, 3]
@@ -398,10 +409,12 @@ class multfs_interdms_ABBCCA(multfs_base):
 
 class multfs_interdms_ABCABC(multfs_base):
     
-    def __init__(self, block_path, task_name, n_trials, feature = "loc", pattern = "ABCABC", seq_len=6, session = None, **kwargs):
+    def __init__(self, block_path, task_name, n_trials, op = None, feature = "loc", pattern = "ABCABC", seq_len=6, session = None, **kwargs):
         super().__init__(block_path, task_name, **kwargs)
         self.seq_len = seq_len
         self.feature = feature
+        self.op = op
+
         self.pattern = pattern
         self.session = session # todo: add progress bar
         self.no_response_frames = [0, 1, 2]

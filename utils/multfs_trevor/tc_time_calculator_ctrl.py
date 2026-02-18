@@ -9,7 +9,7 @@ DMS_TRIAL = 9.45
 INTERDMS_TRIAL = 25.85
 CTXDM_TRIAL = 14.42
 ONEBACK_TRIAL = 24.36
-TWOBACK_TRIAL = 24.36
+TWOBACK_TRIAL = 22.62
 
 """
 Assuming 4hours of in scanner time, 1h per session for 4 sessions

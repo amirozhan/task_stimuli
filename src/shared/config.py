@@ -16,7 +16,8 @@ EYETRACKING_ROI = (60, 30, 660, 450)
 
 EXP_SCREEN_XRANDR_NAME = "eDP-1"
 
-MIRROR_X = True     # left↔right mirror
+MIRROR_X = False     # left↔right mirror
+FULLSCREEN = False
 
 EXP_MONITOR = Monitor(
     name='__blank__',
@@ -27,7 +28,7 @@ EXP_MONITOR = Monitor(
 EXP_WINDOW = dict(
     size=(1920, 1080),
     screen=1,
-    fullscr=True,
+    fullscr=FULLSCREEN,
     gammaErrorPolicy="warn",
     #waitBlanking=False,
     waitBlanking=True,
