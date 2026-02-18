@@ -7,7 +7,7 @@ import random
 # 1. CONFIGURATION
 # ---------------------------------------------------------
 OUTLIER_CSV_PATH = '/mnt/store1/lucas/checkpoints/fixed/tf_medium_full_3000eps_ubt_semifixed/results/ctrl_pred_betas/LH_RH/nps5to50/MASTER_selected_conditions.csv'
-OUTPUT_DIR = '/home/lucas/projects/task_stimuli/data/multfs/trevor/blockfiles/session05'
+OUTPUT_DIR = '/home/lucas/projects/task_stimuli/data/multfs/trevor/blockfiles/session06'
 
 # GLOBAL SEED FOR REPRODUCIBILITY
 SEED = 5112000
@@ -21,17 +21,17 @@ if not os.path.exists(OUTPUT_DIR):
 
 # Study Design
 STUDY_DESIGN = {
-    "DMSA_CL":             {"8BL": 10, "rnd": 1},
-    "DMSO_LC":             {"10v": 10, "rnd": 1},
-    "OnebackA_LO":         {"46": 3, "8BL": 2, "9-46d": 2, "p9-46v": 2, "rnd": 1},
-    "OnebackO_LO":         {"46": 3, "8C": 2, "9-46d": 2, "p9-46v": 2, "rnd": 1},
-    "Twoback_LOC":         {"10v": 2, "8BL": 1, "8C": 2, "9-46d": 2, "p9-46v": 2, "rnd": 1},
-    "Twoback_CTG":         {"10v": 2, "8BL": 1, "8C": 2, "9-46d": 2, "p9-46v": 2, "rnd": 1},
-    "InterDMS_LOC_ABCABC": {"46": 3, "8C": 2, "p9-46v": 1, "rnd": 1},
-    "InterDMS_LOC_ABBCCA": {"46": 3, "8C": 2, "9-46d": 1, "rnd": 1},
-    "InterDMS_CTG_ABBCCA": {"8BL": 1, "9-46d": 2, "p9-46v": 2, "rnd": 1},
-    "ctxDM_OLC":           {"10v": 3, "8BL": 3, "9-46d": 1, "p9-46v": 1, "rnd": 1},
-    "ctxDM_LOL":           {"10v": 3, "8BL": 3, "8C": 2, "rnd": 1}
+    "DMSA_CL":             {"rnd": 3},
+    "DMSO_LC":             {"rnd": 3},
+    "OnebackA_LO":         {"rnd": 3},
+    "OnebackO_LO":         {"rnd": 3},
+    "Twoback_LOC":         {"rnd": 3},
+    "Twoback_CTG":         {"rnd": 3},
+    "InterDMS_LOC_ABCABC": {"rnd": 3},
+    "InterDMS_LOC_ABBCCA": {"rnd": 3},
+    "InterDMS_CTG_ABBCCA": {"rnd": 3},
+    "ctxDM_OLC":           {"rnd": 3},
+    "ctxDM_LOL":           {"rnd": 3}
 }
 
 # Task Stimuli Counts
