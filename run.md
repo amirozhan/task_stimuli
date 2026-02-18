@@ -15,3 +15,12 @@
 
 ### Command for Feb 19 10-12pm, Trevor Ses-05
 ```python main.py   --subject 01   --session 5   --tasks multfs   --output output/multfs_v2_tp   --no-force-resolution   --run_on_battery   --skip-soundcheck --fmri```
+
+
+
+
+
+
+
+### PRACTICE FOR CTRL ###
+```python main.py   --subject 01   --session 6   --tasks multfs   --output output/multfs_v2_tp   --no-force-resolution   --run_on_battery   --skip-soundcheck --fmri```

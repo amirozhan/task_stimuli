@@ -1,0 +1,4 @@
+﻿TrialNumber	loc1	ref1	obj1	ctg1	ang1	loc2	ref2	obj2	ctg2	ang2	tc	ran	order	late_responses_0	stimulus_0_onset	stimulus_0_offset	late_responses_1	stimulus_1_onset	stimulus_1_offset
+1	1	3	1	0	1	1	1	0	0	1	1110.0	1.0	0.0	[]	2.998651	4.488307	[]	6.228364	7.716559
+2	1	4	2	1	0	0	3	1	0	1	1201.0	1.0	1.0	[]	12.443517	13.936731	[]	15.676242	17.166866
+3	0	5	2	1	1	0	4	2	1	0	202.0	1.0	2.0	[]	21.894464	23.386972	[]	25.126307	26.616253
