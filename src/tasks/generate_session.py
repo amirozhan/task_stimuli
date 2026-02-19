@@ -5,7 +5,7 @@ if __name__ == "__main__":
     from pathlib import Path
     # roots
     main_path = r"C:\Users\Bashivan Lab\Desktop\NACC\task_stimuli\data\mutemusic"
-    sub = "03"
+    sub = "04"
 
     subject_dir = Path(main_path) / f"Sub-{sub}" / "music"
     subject_dir.mkdir(parents=True, exist_ok=True)
