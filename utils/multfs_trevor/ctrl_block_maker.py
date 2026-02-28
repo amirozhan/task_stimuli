@@ -7,7 +7,7 @@ import random
 # 1. CONFIGURATION
 # ---------------------------------------------------------
 OUTLIER_CSV_PATH = '/mnt/store1/lucas/checkpoints/fixed/tf_medium_full_3000eps_ubt_semifixed/results/ctrl_pred_betas/LH_RH/nps5to50/MASTER_selected_conditions.csv'
-OUTPUT_DIR = '/home/lucas/projects/task_stimuli/data/multfs/trevor/blockfiles/session05'
+OUTPUT_DIR = '/home/lucas/projects/task_stimuli/data/multfs/trevor/blockfiles/session05_rep'
 
 # GLOBAL SEED FOR REPRODUCIBILITY
 SEED = 5112000
@@ -215,7 +215,7 @@ def main():
             for p in prefixes:
                 feature_cols.append(f"{p}{i}")
                     
-        cols_to_save = feature_cols + ['tc']
+        cols_to_save = feature_cols + ['tc', 'trial_type']
         cols_to_save = [c for c in cols_to_save if c in final_df.columns]
         
         # Shuffle with random_state
