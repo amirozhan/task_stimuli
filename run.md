@@ -1,10 +1,5 @@
 ### Command example for mutemusic (NACC)
-```python3 main.py   --subject 00   --session 01   --tasks mutemusic   --output output/test_mgh_music   --no-force-resolution   --run_on_battery   --skip-soundcheck --fmri```
+python main.py   --subject 03   --session 4 --blocks 1-10 --tasks mutemusic   --output output/sub03_AS_E4_B1-B10  --no-force-resolution   --run_on_battery   --skip-soundcheck --fmri
 
-### Test restarting from block
-
- 
 
 python soundtest.py
-
-python main.py   --subject 02   --session 5 --blocks 1-10 --tasks mutemusic   --output output/sub02_AR_E5_B1-B10  --no-force-resolution   --run_on_battery   --skip-soundcheck --fmri55
