@@ -1,0 +1,3 @@
+path,segment_start,segment_len,rating_value,confirmation,onset,offset,play_cmd_wall_iso,play_cmd_wall_epoch,q_start_wall_iso,q_start_wall_epoch,response_wall_iso,response_wall_epoch
+C:\Users\Bashivan Lab\Desktop\NACC\task_stimuli\data\mutemusic\Sub-03\music\shared\track54.mp3,37.096,30.0,2,yes,5.007879500000854,35.00787950000086,2026-04-02T18:05:01.822-04:00,1775167501.8228545,2026-04-02T18:05:33.822-04:00,1775167533.8225067,2026-04-02T18:05:34.850-04:00,1775167534.850646
+C:\Users\Bashivan Lab\Desktop\NACC\task_stimuli\data\mutemusic\Sub-03\music\shared\track38.mp3,22.461,30.0,3,yes,52.09223029999703,82.09223029999703,2026-04-02T18:05:48.907-04:00,1775167548.9072254,2026-04-02T18:06:20.907-04:00,1775167580.907607,2026-04-02T18:06:22.705-04:00,1775167582.705275
