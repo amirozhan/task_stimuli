@@ -1,0 +1,6 @@
+subject,episode_id,episode_date,mode,block_id,block_order,song_id,song_dir,song_file,song_relpath,segment_start,segment_len,segment_relpath,is_new,first_seen_episode_id,first_seen_date,first_seen_block_id,first_seen_block_order,played,rating_value,confirmation
+03,E07,2026-04-23,fixed-segments,8,1,track21,shared_30_new,track21.mp3,shared_30_new\track21.mp3,43.242,30.0,shared_30_new\track21.mp3,1,E07,2026-04-23,8,1,0,,
+03,E07,2026-04-23,fixed-segments,8,2,track7,control_lastfm,track7.mp3,control_lastfm\track7.mp3,66.721,30.0,control_lastfm\track7.mp3,1,E07,2026-04-23,8,2,0,,
+03,E07,2026-04-23,fixed-segments,8,3,track10,favorite_10_new,track10.mp3,favorite_10_new\track10.mp3,10.484,30.0,favorite_10_new\track10.mp3,0,E07,2026-04-23,10,1,0,,
+03,E07,2026-04-23,fixed-segments,8,4,track7,shared_30_new,track7.mp3,shared_30_new\track7.mp3,51.252,30.0,shared_30_new\track7.mp3,0,E07,2026-04-23,8,2,0,,
+03,E07,2026-04-23,fixed-segments,8,5,track3,shared_30_new,track3.mp3,shared_30_new\track3.mp3,76.527,30.0,shared_30_new\track3.mp3,0,E07,2026-04-23,2,3,0,,

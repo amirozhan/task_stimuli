@@ -7,8 +7,7 @@ warnings.filterwarnings("ignore")             # suppress Python warnings
 logging.console.setLevel(logging.CRITICAL+1)
 from psychopy import prefs
 prefs.hardware['audioLib'] = ['ptb', 'sounddevice', 'pyo']
-prefs.hardware['audioDevice'] = 'Headphones (HyperX Cloud III S Wireless)'
-# prefs.hardware['audioDevice'] = 'G272QPF E2 (NVIDIA High Definition Audio)' 
+prefs.hardware['audioDevice'] = 'G272QPF E2 (NVIDIA High Definition Audio)' 
 
 
 
