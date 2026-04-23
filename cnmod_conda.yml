@@ -1,0 +1,6 @@
+name: cnmod
+channels:
+  - defaults
+dependencies:
+  - python=3.9
+prefix: D:\Dev\envs\cnmod

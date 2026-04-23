@@ -330,6 +330,10 @@ def plan_all_episodes(
     # Useful when generating files on a different machine than the runner.
     # Example: emit_root=r"C:\Users\Bashivan Lab\Desktop\NACC\task_stimuli\data\mutemusic\Sub-05\music"
     emit_root: Optional[str] = None,
+    # Optional: override where the `episodes/` folder is written. Defaults to
+    # `root_dir`. Useful when audio lives in `<sub>/music` but you want the
+    # generated episodes/blocks to land at `<sub>/episodes`.
+    episodes_root: Optional[str] = None,
     # ONLY configs; at least one of these must be provided
     segments_dict: Optional[Dict[str, Any]] = None,       # in-code dict
     segments_path: Optional[str] = None,                  # single file for all buckets
@@ -351,7 +355,8 @@ def plan_all_episodes(
         raise ValueError("Config-only mode: provide segments_dict and/or segments_path and/or segments_path_shared/segments_path_favorite/segments_path_control.")
 
     root = Path(root_dir)
-    _ensure(root / "episodes")
+    ep_root = Path(episodes_root) if episodes_root else root
+    _ensure(ep_root / "episodes")
 
     # Optional control: only enable if the file actually exists.
     if segments_path_control and not Path(segments_path_control).exists():
@@ -407,7 +412,7 @@ def plan_all_episodes(
 
     for e in range(start_episode, start_episode + n_episodes):
         episode_id = f"E{e:02d}"
-        ep_dir = root / "episodes" / episode_id
+        ep_dir = ep_root / "episodes" / episode_id
         _ensure(ep_dir)
 
         template = _episode_template(

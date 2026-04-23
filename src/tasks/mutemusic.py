@@ -1,13 +1,14 @@
-import os, time, pandas,re
+import os, time, pandas, re
 import warnings
-from psychopy import logging
 from datetime import datetime, timezone #added timezone
 
+from psychopy import logging
 warnings.filterwarnings("ignore")             # suppress Python warnings
-logging.console.setLevel(logging.CRITICAL+1) 
+logging.console.setLevel(logging.CRITICAL+1)
 from psychopy import prefs
-prefs.hardware['audioLib'] = ['ptb']
-prefs.hardware['audioDevice'] = 'G272QPF E2 (NVIDIA High Definition Audio)' 
+prefs.hardware['audioLib'] = ['ptb', 'sounddevice', 'pyo']
+prefs.hardware['audioDevice'] = 'Headphones (HyperX Cloud III S Wireless)'
+# prefs.hardware['audioDevice'] = 'G272QPF E2 (NVIDIA High Definition Audio)' 
 
 
 

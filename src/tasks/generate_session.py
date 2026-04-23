@@ -24,7 +24,7 @@ if __name__ == "__main__":
     #     segments_path_favorite=str(segments_favorite),
     # )
 
-    sub = "05"
+    sub = "03"
 
     # Where the audio + JSON configs live on THIS machine (and where the
     # episode/block folders will be written). On Linux, point this at your
@@ -35,7 +35,8 @@ if __name__ == "__main__":
     # What absolute path prefix to embed inside playlist.tsv. Set this to the
     # path the runner (task computer) will see at runtime. Set to None to use
     # the local absolute path instead.
-    emit_main_path = r"C:\Users\Bashivan Lab\Desktop\NACC\task_stimuli\data\mutemusic"
+    # emit_main_path = r"C:\Users\Bashivan Lab\Desktop\NACC\task_stimuli\data\mutemusic"
+    emit_main_path = local_main_path # for testing, use the same path as local_main_path
 
     subject_dir = local_main_path / f"Sub-{sub}" / "music"
     subject_dir.mkdir(parents=True, exist_ok=True)
@@ -68,6 +69,7 @@ if __name__ == "__main__":
     # additional 5 episodes (E06..E10) with 10 blocks each
     out_dirs = plan_all_episodes(
         root_dir=str(subject_dir),
+        episodes_root=str(subject_dir.parent),  # write episodes/ under Sub-XX/
         subject=sub,
         n_episodes=5,
         n_blocks=10,

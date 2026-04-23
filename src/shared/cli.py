@@ -284,7 +284,11 @@ Thanks for your participation!"""
                         record_movie=record_movie,
                     )
                 except Exception:
-                    task
+                    import traceback
+                    print("=" * 60)
+                    print(f"EXCEPTION in task {task}:")
+                    traceback.print_exc()
+                    print("=" * 60)
                 logging.flush()
 
                 if shortcut_evt == "n":

@@ -69,32 +69,47 @@ def _build_segments_for_bucket(
     randomize: bool,
     clamp_to_duration: bool,
     use_bare_stem_keys: bool,
+    safety_margin: float = 1.0,
 ) -> Dict[str, Dict[str, float]]:
     cfg: Dict[str, Dict[str, float]] = {}
     for r in items:
         key_for_config = r["stem"] if use_bare_stem_keys else f"{r['stem']}__{r['bucket']}"
         abs_path = (root / r["path"]).resolve()
 
-        if randomize:
-            rng = _per_song_rng(seed, key_for_config)  # seed by the key we write
-            start = rng.uniform(10.0, max(10.0, float(max_start)))
-        else:
-            start = 10.0
-
         length = float(seg_len)
 
-        if clamp_to_duration:
-            dur = _maybe_probe_duration_seconds(abs_path)
-            if dur is not None:
-                if length > dur:
-                    length = max(10.0, dur)
-                    start = 10.0
-                else:
-                    latest_start = max(10.0, dur - length)
-                    if start > latest_start:
-                        start = latest_start
+        # Always probe duration so we can guarantee start+length+margin <= dur
+        dur = _maybe_probe_duration_seconds(abs_path) if clamp_to_duration else None
+        if clamp_to_duration and dur is None:
+            raise RuntimeError(
+                f"Could not probe duration for {abs_path}. Install pydub, soundfile, or librosa."
+            )
 
-        cfg[key_for_config] = {"start": round(float(start), 3), "len": length}
+        if clamp_to_duration:
+            usable = dur - safety_margin
+            if length > usable:
+                length = max(1.0, usable)
+                latest_start = 0.0
+            else:
+                latest_start = max(0.0, usable - length)
+            min_start = min(10.0, latest_start)
+        else:
+            latest_start = float(max_start)
+            min_start = 10.0
+
+        if randomize:
+            rng = _per_song_rng(seed, key_for_config)
+            hi = min(float(max_start), latest_start) if clamp_to_duration else float(max_start)
+            hi = max(min_start, hi)
+            start = rng.uniform(min_start, hi)
+        else:
+            start = min_start
+
+        # Final hard clamp (defensive)
+        if clamp_to_duration:
+            start = min(start, latest_start)
+
+        cfg[key_for_config] = {"start": round(float(start), 3), "len": round(float(length), 3)}
     return cfg
 
 def generate_segments_json_split(
@@ -213,7 +228,7 @@ def generate_segments_json_split(
 # )
 
 # main_path = r"C:\Users\Bashivan Lab\Desktop\NACC\task_stimuli\data\mutemusic"
-main_path = "/home/lucas/projects/task_stimuli/data/mutemusic"
+main_path = r"C:\\Users\\Lucas\\Desktop\\NACC\\task_stimuli\\data\\mutemusic"
 sub = "03"
 
 subject_dir = Path(main_path) / f"Sub-{sub}" / "music"
@@ -233,7 +248,7 @@ generate_segments_json_split(
     shared_len=30.0,
     control_len=30.0,
     favorite_len=30.0,
-    shared_max_start=120,
+    shared_max_start=90,
     control_max_start=120,
     favorite_max_start=120,
     randomize_shared=True,
