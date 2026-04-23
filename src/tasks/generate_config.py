@@ -227,8 +227,8 @@ def generate_segments_json_split(
 #     subset_favorite=20,
 # )
 
-# main_path = r"C:\Users\Bashivan Lab\Desktop\NACC\task_stimuli\data\mutemusic"
-main_path = r"C:\\Users\\Lucas\\Desktop\\NACC\\task_stimuli\\data\\mutemusic"
+main_path = r"C:\Users\Bashivan Lab\Desktop\NACC\task_stimuli\data\mutemusic"
+# main_path = r"C:\\Users\\Lucas\\Desktop\\NACC\\task_stimuli\\data\\mutemusic"
 sub = "03"
 
 subject_dir = Path(main_path) / f"Sub-{sub}" / "music"
