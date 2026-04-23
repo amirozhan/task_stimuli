@@ -1,0 +1,71 @@
+{
+  "folder": "/mnt/tempdata/NACC_data/MGH_data/Songs/AS/AS_new_favs_eqd",
+  "start_index": 1,
+  "old_to_new": {
+    "Beach House - Space Song (Official Instrumental).mp3": "track1.mp3",
+    "Childish Gambino - Redbone (Instrumental).mp3": "track2.mp3",
+    "Daft Punk - Veridis Quo (Official Audio).mp3": "track3.mp3",
+    "Gorillaz - Feel Good Inc True Instrumental - No Laugh.mp3": "track4.mp3",
+    "Im On Fire - Bruce Springsteen  Instrumental (KaraokeNo Vocals).mp3": "track5.mp3",
+    "Kanye West - Good Life (Instrumental).mp3": "track6.mp3",
+    "Kendrick Lamar - Money Trees (Instrumental).mp3": "track7.mp3",
+    "Lana Del Rey - Cinnamon Girl (Instrumental).mp3": "track8.mp3",
+    "Lord Huron - The Night We Met  Instrumental.mp3": "track9.mp3",
+    "The 1975  Somebody Else (Official Instrumental).mp3": "track10.mp3"
+  },
+  "new_to_old": {
+    "track1.mp3": "Beach House - Space Song (Official Instrumental).mp3",
+    "track2.mp3": "Childish Gambino - Redbone (Instrumental).mp3",
+    "track3.mp3": "Daft Punk - Veridis Quo (Official Audio).mp3",
+    "track4.mp3": "Gorillaz - Feel Good Inc True Instrumental - No Laugh.mp3",
+    "track5.mp3": "Im On Fire - Bruce Springsteen  Instrumental (KaraokeNo Vocals).mp3",
+    "track6.mp3": "Kanye West - Good Life (Instrumental).mp3",
+    "track7.mp3": "Kendrick Lamar - Money Trees (Instrumental).mp3",
+    "track8.mp3": "Lana Del Rey - Cinnamon Girl (Instrumental).mp3",
+    "track9.mp3": "Lord Huron - The Night We Met  Instrumental.mp3",
+    "track10.mp3": "The 1975  Somebody Else (Official Instrumental).mp3"
+  },
+  "pairs": [
+    {
+      "old": "Beach House - Space Song (Official Instrumental).mp3",
+      "new": "track1.mp3"
+    },
+    {
+      "old": "Childish Gambino - Redbone (Instrumental).mp3",
+      "new": "track2.mp3"
+    },
+    {
+      "old": "Daft Punk - Veridis Quo (Official Audio).mp3",
+      "new": "track3.mp3"
+    },
+    {
+      "old": "Gorillaz - Feel Good Inc True Instrumental - No Laugh.mp3",
+      "new": "track4.mp3"
+    },
+    {
+      "old": "Im On Fire - Bruce Springsteen  Instrumental (KaraokeNo Vocals).mp3",
+      "new": "track5.mp3"
+    },
+    {
+      "old": "Kanye West - Good Life (Instrumental).mp3",
+      "new": "track6.mp3"
+    },
+    {
+      "old": "Kendrick Lamar - Money Trees (Instrumental).mp3",
+      "new": "track7.mp3"
+    },
+    {
+      "old": "Lana Del Rey - Cinnamon Girl (Instrumental).mp3",
+      "new": "track8.mp3"
+    },
+    {
+      "old": "Lord Huron - The Night We Met  Instrumental.mp3",
+      "new": "track9.mp3"
+    },
+    {
+      "old": "The 1975  Somebody Else (Official Instrumental).mp3",
+      "new": "track10.mp3"
+    }
+  ],
+  "count": 10
+}
